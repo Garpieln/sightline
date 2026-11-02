@@ -168,3 +168,89 @@ td code,p code,li code{font-family:var(--f-mono);font-size:13px}
 .confirm{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .section{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;margin-top:18px;min-width:0}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* chords */
+:root{--accent-soft-strong:rgba(44,70,168,.22)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--accent-soft-strong:rgba(147,166,255,.26)}}
+:root[data-theme="dark"]{--accent-soft-strong:rgba(147,166,255,.26)}
+.eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.ch-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:20px;margin-top:20px}
+@media (max-width:900px){.ch-top{grid-template-columns:minmax(0,1fr)}}
+.ch-now{display:flex;flex-direction:column;gap:6px}
+.ch-sym{font-family:var(--f-display);font-size:64px;font-weight:700;line-height:1.05;letter-spacing:-.01em;min-height:68px;overflow-wrap:anywhere}
+.ch-sym.muted{color:var(--ink-2)}
+.ch-desc{margin:0;font-size:17px}
+.ch-chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 2px}
+.pill{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.pill.num{font-family:var(--f-mono);font-weight:500;background:var(--ink);color:var(--surface)}
+.pill.secondary{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.pill.borrowed{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pill.chromatic{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.ch-notes{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 0;font-family:var(--f-mono);font-size:15px}
+.ch-notes sub{font-size:10px;color:var(--ink-2)}
+.ch-staff svg{display:block;width:100%;max-width:440px;height:auto;color:var(--ink);margin-top:6px}
+.ledger{stroke:currentColor;stroke-width:1}
+.ch-staff .head{fill:currentColor}
+.ch-keyhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+#chKey{font-size:18px}#chKey b{font-family:var(--f-display);font-size:22px}
+.ch-circle svg{display:block;width:100%;max-width:440px;height:auto;margin:6px auto 0}
+.cell path{fill:var(--surface);stroke:var(--rule);stroke-width:1;transition:fill .15s}
+.cell{cursor:pointer;outline:none}
+.cell:hover path,.cell:focus-visible path{fill:var(--accent-soft)}
+.cell.in-key path{fill:var(--accent-soft-strong)}
+.cell.tonic path{stroke:var(--accent);stroke-width:2}
+.cell.current path{fill:var(--accent)}
+.cell text{text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.cell .clbl{font-family:var(--f-display);font-weight:700;font-size:19px;fill:var(--ink)}
+.cell.min .clbl{font-size:15px}
+.cell .clbl.small{font-size:12px}
+.cell .numl{font-family:var(--f-mono);font-size:10.5px;fill:var(--accent)}
+.cell.current .clbl,.cell.current .numl{fill:var(--surface)}
+.cell .badge{fill:var(--ink)}
+.cell .badge-t{fill:var(--surface);font-family:var(--f-mono);font-size:10px;font-weight:500}
+.sigl{text-anchor:middle;dominant-baseline:central;font-family:var(--f-mono);font-size:10px;fill:var(--ink-2)}
+.hub{fill:var(--paper);stroke:var(--rule)}
+.hub-k,.hub-s,.hub-m{text-anchor:middle;dominant-baseline:central}
+.hub-k{font-family:var(--f-display);font-weight:700;font-size:17px;fill:var(--ink)}
+.hub-s{font-family:var(--f-mono);font-size:12px;fill:var(--ink-2)}
+.hub-m{font-size:10px;letter-spacing:.08em;text-transform:uppercase;fill:var(--accent)}
+.ch-dia{margin-top:20px}
+.ch-row-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ch-opts{display:flex;gap:16px;flex-wrap:wrap}
+.dchips{display:grid;grid-template-columns:repeat(auto-fit,minmax(74px,1fr));gap:8px}
+.dchip{border:1px solid var(--rule);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:1px;min-width:0}
+.dchip .num{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.dchip b{font-family:var(--f-display);font-size:20px;overflow-wrap:anywhere}
+.dchip small{font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.dchip.here{background:var(--accent);border-color:var(--accent)}
+.dchip.here,.dchip.here .num,.dchip.here small{color:var(--surface)}
+.ch-for{margin:22px 0 10px}
+.ch-sugs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:start}
+@media (max-width:1050px){.ch-sugs{grid-template-columns:minmax(0,1fr)}}
+.ch-sugs h3{margin-bottom:4px}
+.sug{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.sug li{display:flex;gap:10px;align-items:flex-start;border-top:1px solid var(--rule);padding-top:12px}
+.sug li:first-child{border-top:0;padding-top:0}
+.badge-n{flex:none;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--surface);font-family:var(--f-mono);font-size:11px;display:grid;place-items:center;margin-top:4px}
+.sug-body{min-width:0}
+.sug-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.sug .sym{font-family:var(--f-display);font-size:22px}
+.sug .num{font-family:var(--f-mono);font-size:12px;color:var(--accent)}
+.sug p{margin:2px 0 0;font-size:14px}
+.sug .meta{font-size:12px;color:var(--ink-2);font-family:var(--f-mono)}
+.str{font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:1px 7px;border-radius:5px}
+.str.strong{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.str.common{background:var(--accent-soft);color:var(--accent)}
+.str.color{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.empty{color:var(--ink-2);font-size:14px}
+.progs{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:14px}
+.prog-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.prog,.hist-strip{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px}
+.pchip,.hchip{border:1px solid var(--rule);border-radius:8px;padding:3px 8px;display:inline-flex;flex-direction:column;align-items:center;line-height:1.2}
+.pchip b,.hchip b{font-family:var(--f-display);font-size:16px}
+.pchip small,.hchip small{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-2)}
+.pchip.here{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.pchip.here small{color:var(--surface)}
+.arrow{color:var(--ink-2);font-size:12px}
+.ch-hist{margin-top:20px}
+.ch-window{margin-top:16px;max-width:420px}

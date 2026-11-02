@@ -6,6 +6,7 @@ const DEFAULTS = {
   key: "C", range: "five", rhythm: "q", bars: "8", mode: "tempo", bpm: 60, feedback: "live",
   metro: true, countin: true, offset: 0,
   fkey: "C", frange: "oct", fsec: 4, fcount: "20", fsound: true, fanyoct: false, fname: true,
+  ckey: "0M", cauto: true, cnotes: false, cwindow: 1.5, csev: false,
 };
 
 export const CFG = Object.assign({}, DEFAULTS, load("cfg", {}));

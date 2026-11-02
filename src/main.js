@@ -2,13 +2,14 @@
 import { $, $$ } from "./dom.js";
 import { CFG, saveCfg, app } from "./state.js";
 import { midiName, RANGE_TEXT } from "./music.js";
-import { initMIDI, onNote, handleComputerKey } from "./input.js";
+import { initMIDI, onNote, onNoteOff, onPedal, handleComputerKey, handleComputerKeyUp, releaseAllComputerKeys } from "./input.js";
 import * as read from "./read.js";
 import * as flash from "./flash.js";
+import * as chords from "./chords.js";
 import { initLearn } from "./learn.js";
 import { renderStats, initProgress } from "./progress.js";
 
-const TABS = ["read", "flash", "learn", "stats"];
+const TABS = ["read", "flash", "chords", "learn", "stats"];
 
 // ---- settings controls ----
 function bindSegments(attr, prefix) {
@@ -57,6 +58,7 @@ function route() {
   if (app.tab !== "read" && read.isRunning()) read.stop(true);
   if (app.tab !== "flash" && flash.isRunning()) flash.end();
   if (app.tab === "stats") renderStats();
+  if (app.tab === "chords") chords.activate(); else chords.deactivate();
 }
 addEventListener("hashchange", route);
 
@@ -65,14 +67,19 @@ onNote((m, ts) => {
   $("#heard").textContent = midiName(m, app.tab === "flash" ? CFG.fkey : CFG.key);
   if (app.tab === "read") read.handleNote(m, ts);
   else if (app.tab === "flash") flash.handleNote(m, ts);
+  else if (app.tab === "chords") chords.handleNote(m, ts);
 });
+onNoteOff((m) => chords.handleNoteOff(m));
+onPedal((down) => chords.handlePedal(down));
+document.addEventListener("keyup", handleComputerKeyUp);
+addEventListener("blur", releaseAllComputerKeys);
 
 document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target;
   if (t.tagName === "INPUT" && t.type !== "range" && t.type !== "checkbox") return;
-  const playing = app.tab === "read" || app.tab === "flash";
-  if (e.code === "Space" && playing) {
+  const playing = app.tab === "read" || app.tab === "flash" || app.tab === "chords";
+  if (e.code === "Space" && (app.tab === "read" || app.tab === "flash")) {
     e.preventDefault();
     if (!e.repeat) app.tab === "read" ? read.toggle() : flash.toggle();
     return;
@@ -94,6 +101,7 @@ onSetting("range");
 read.initRead(syncInputs);
 flash.initFlash();
 initProgress();
+chords.initChords();
 initLearn();
 route();
 initMIDI((state, text) => { $("#midi").dataset.state = state; $("#midiText").textContent = text; });

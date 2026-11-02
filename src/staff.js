@@ -47,3 +47,62 @@ export function noteHead(x, d, dur) {
   }
   return s;
 }
+
+// ---------- grand staff (for chords) ----------
+// Treble bottom line E4 = step 2; bass bottom line G2 = step -10. Notes at or above
+// middle C go on the treble staff. Steps count letters from middle C (C4 = 0).
+const G = { tBot: 92, bBot: 188, space: 12 };
+const tY = (d) => G.tBot - (d - 2) * HALF;
+const bY = (d) => G.bBot - (d + 10) * HALF;
+const BASS_S = 12 / 220; // bass clef glyph: 220 font units per staff space
+
+const ACC_GLYPH = { "-2": ["dflat", 100], "-1": ["flat", 100], 0: ["natural", 132], 1: ["sharp", 131], 2: ["dsharp", 131] };
+
+// notes: [{ step, acc, staff: "t" | "b" }]; sig: [["s"|"f", letter]]; sigAcc: accidental per letter index
+export function grandStaff(notes, sig, sigAcc, width = 360) {
+  let s = "";
+  for (let i = 0; i < 5; i++) {
+    s += `<line class="staffline" x1="14" x2="${width}" y1="${G.tBot - i * 12}" y2="${G.tBot - i * 12}"/>`;
+    s += `<line class="staffline" x1="14" x2="${width}" y1="${G.bBot - i * 12}" y2="${G.bBot - i * 12}"/>`;
+  }
+  s += `<line class="barline" x1="14" x2="14" y1="${G.tBot - 48}" y2="${G.bBot}"/><line class="barline" x1="${width}" x2="${width}" y1="${G.tBot - 48}" y2="${G.bBot}"/>`;
+  s += `<path class="glyph" d="M10 ${G.tBot - 48} C -2 ${G.tBot - 20}, 10 ${G.tBot + 8}, 1 ${(G.tBot + G.bBot - 48) / 2} C 10 ${G.bBot - 56}, -2 ${G.bBot - 28}, 10 ${G.bBot} C 3 ${G.bBot - 28}, 14 ${G.bBot - 56}, 4 ${(G.tBot + G.bBot - 48) / 2} C 14 ${G.tBot + 8}, 3 ${G.tBot - 20}, 10 ${G.tBot - 48}Z"/>`;
+  s += glyph(GLYPH.clef, 20, G.tBot);
+  s += `<path class="glyph" d="${GLYPH.bass}" transform="translate(22 ${G.bBot - 36 + 644 * BASS_S}) scale(${BASS_S} ${-BASS_S})"/>`;
+  let x = 64;
+  for (const [type, letter] of sig) {
+    const d = type === "s" ? SHARP_POS[letter] : FLAT_POS[letter];
+    const [g, c] = type === "s" ? ["sharp", 131] : ["flat", 100];
+    s += glyph(GLYPH[g], x, tY(d) + c * GS) + glyph(GLYPH[g], x, bY(d - 14) + c * GS);
+    x += 11;
+  }
+  const nx = Math.max(x + 60, width / 2 + 10);
+  for (const staff of ["t", "b"]) {
+    const ns = notes.filter((n) => n.staff === staff).sort((a, b) => a.step - b.step);
+    const Y = staff === "t" ? tY : bY, bot = staff === "t" ? 2 : -10, top = bot + 8;
+    // ledger lines
+    const lo = Math.min(...ns.map((n) => n.step), bot), hi = Math.max(...ns.map((n) => n.step), top);
+    const wide = ns.some((n, i) => i && n.step - ns[i - 1].step === 1) ? 26 : 12;
+    for (let d = bot - 2; d >= lo; d -= 2) s += `<line class="ledger" x1="${nx - 12}" x2="${nx + wide}" y1="${Y(d)}" y2="${Y(d)}"/>`;
+    for (let d = top + 2; d <= hi; d += 2) s += `<line class="ledger" x1="${nx - 12}" x2="${nx + wide}" y1="${Y(d)}" y2="${Y(d)}"/>`;
+    // seconds sit on alternate sides of the stem position
+    let prev = null, flip = false;
+    const accCols = [];
+    ns.forEach((n) => {
+      flip = prev !== null && n.step - prev === 1 ? !flip : false;
+      prev = n.step;
+      const x0 = nx + (flip ? 13.5 : 0), y = Y(n.step);
+      s += `<ellipse class="head" cx="${x0}" cy="${y}" rx="7.4" ry="5.2" transform="rotate(-20 ${x0} ${y})"/>`;
+      const shown = n.acc !== sigAcc[((n.step % 7) + 7) % 7];
+      if (shown) {
+        let col = 0;
+        while (accCols.some((a) => a.col === col && Math.abs(a.step - n.step) < 6)) col++;
+        accCols.push({ col, step: n.step });
+        const [g, c] = ACC_GLYPH[n.acc];
+        s += glyph(GLYPH[g], nx - 22 - col * 12, y + c * GS);
+      }
+    });
+  }
+  return s;
+}
+export const GRAND_H = 214;

@@ -18,6 +18,7 @@
     <nav id="tabs">
       <a href="#read" data-tab="read">Read &amp; play</a>
       <a href="#flash" data-tab="flash">Flashcards</a>
+      <a href="#chords" data-tab="chords">Chords</a>
       <a href="#learn" data-tab="learn">Learn</a>
       <a href="#stats" data-tab="stats">Progress</a>
     </nav>
@@ -97,6 +98,51 @@
       </div>
       <div class="summary" id="flashSummary" hidden></div>
     </div>
+  </div>
+</section>
+
+<!-- ============ CHORDS ============ -->
+<section class="view" id="view-chords" hidden>
+  <h1>Chords</h1>
+  <p class="lede">Play any chord. Sightline names it, shows where it sits on the circle of fifths and in the key, and suggests what could come next. Suggestions follow common-practice and pop conventions, with the reason for each.</p>
+
+  <div class="ch-top">
+    <div class="sheet ch-now" aria-live="polite">
+      <div id="chReadout"></div>
+      <div class="ch-staff" id="chStaff"></div>
+    </div>
+    <div class="sheet ch-key">
+      <div class="ch-keyhead">
+        <div><div class="eyebrow">Key</div><div id="chKey"></div></div>
+        <div class="seg" id="chMode"><button data-v="auto">Auto</button><button data-v="lock">Locked</button></div>
+      </div>
+      <div class="ch-circle" id="chCircle"></div>
+      <p class="hint" id="chKeyAlt"></p>
+      <div class="legend"><span style="--c:var(--accent-soft-strong)">Chords in the key</span><span style="--c:var(--accent)">You're playing</span><span style="--c:var(--ink)">Numbered: suggested next</span></div>
+    </div>
+  </div>
+
+  <div class="sheet ch-dia">
+    <div class="ch-row-head"><h3 id="chDiaTitle">Chords in the key</h3>
+      <div class="ch-opts">
+        <label class="check"><input type="checkbox" id="chSev"> Seventh chords</label>
+        <label class="check"><input type="checkbox" id="chShowNotes"> Show notes</label>
+      </div>
+    </div>
+    <div class="dchips" id="chDiatonic"></div>
+  </div>
+
+  <p class="hint ch-for" id="chFor"></p>
+  <div class="ch-sugs">
+    <div class="sheet"><h3>Next chord</h3><ol class="sug" id="chNext"></ol></div>
+    <div class="sheet"><h3>Add color</h3><p class="hint">Extra notes that stay in the key.</p><ul class="sug" id="chColor"></ul></div>
+    <div class="sheet"><h3>Progressions</h3><p class="hint">Common patterns that use this chord. Your chord is highlighted.</p><ul class="progs" id="chProgs"></ul></div>
+  </div>
+
+  <div class="sheet ch-hist">
+    <div class="ch-row-head"><h3>Recent chords</h3><button class="btn" id="chClear">Clear</button></div>
+    <div class="hist-strip" id="chHistory"></div>
+    <div class="field ch-window"><div class="lbl">Broken-chord window <output id="chWindowOut"></output></div><input type="range" id="chWindow" min="0" max="3" step="0.25"><p class="hint">Notes played one after another within this time count as one chord. Set to Off to count only notes held down.</p></div>
   </div>
 </section>
 

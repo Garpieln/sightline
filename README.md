@@ -8,7 +8,8 @@ It also includes timed note flashcards, music theory lessons, and progress track
 
 - **Read & play**: generated melodies that follow musical rules, in C, G, D, F and B♭ major. Tempo mode (30–160 bpm) or Wait mode. Live color feedback or summary only. End-of-run report with tempo suggestions.
 - **Flashcards**: one note at a time with an adjustable timer, a penalty on misses, and reaction-time tracking.
-- **Learn**: 15 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
+- **Chords**: names any chord you play, shows it on the grand staff and an interactive circle of fifths, detects the key, and suggests next chords, richer voicings and progressions with the reason for each.
+- **Learn**: 16 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
 - **Progress**: accuracy trend, per-note accuracy, session history, and backup export/import.
 - **Adaptive**: notes you miss come up more often in both exercises and flashcards.
 
@@ -35,7 +36,7 @@ Then open <http://localhost:5173>. Localhost counts as a secure page, so MIDI wo
 ## Development
 
 ```sh
-npm test        # generator and music-model tests (Node 20+)
+npm test        # generator, music-model and harmony tests (Node 20+)
 ```
 
 | Path | What's there |
@@ -46,6 +47,8 @@ npm test        # generator and music-model tests (Node 20+)
 | `src/generator.js` | Exercise generator |
 | `src/staff.js`, `src/glyphs.js` | SVG staff and notation drawing |
 | `src/read.js`, `src/flash.js` | Read & play and Flashcards |
+| `src/theory.js` | Harmony engine: keys, chord recognition, analysis, key detection, suggestions |
+| `src/chords.js`, `src/circle.js` | Chords tab and circle of fifths |
 | `src/learn.js`, `content/lessons/` | Lesson loader and lesson content |
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
 | `src/input.js`, `src/audio.js` | MIDI and computer-key input, metronome sounds |

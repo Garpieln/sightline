@@ -36,6 +36,12 @@
     "file": "scales.html"
   },
   {
+    "id": "circle",
+    "title": "The circle of fifths",
+    "group": "Theory",
+    "file": "circle.html"
+  },
+  {
     "id": "chords",
     "title": "Chords and inversions",
     "group": "Theory",
