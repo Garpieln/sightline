@@ -19,6 +19,7 @@
       <a href="#read" data-tab="read">Read &amp; play</a>
       <a href="#flash" data-tab="flash">Flashcards</a>
       <a href="#chords" data-tab="chords">Chords</a>
+      <a href="#voices" data-tab="voices">Voices</a>
       <a href="#learn" data-tab="learn">Learn</a>
       <a href="#stats" data-tab="stats">Progress</a>
     </nav>
@@ -34,6 +35,7 @@
         <p class="hint">Hold Shift while clicking for the other style.</p>
         <div class="field"><div class="lbl">Progression tempo <output id="pbpmOut"></output></div><input type="range" id="pbpm" min="40" max="160" step="5"></div>
         <button class="btn" id="soundTest">Play a test chord</button>
+        <a class="qs-link" href="#voices">Keyboard voice: <b id="qsVoice">Concert Grand</b> →</a>
       </div>
     </details>
     <div class="midi" id="midi" data-state="idle">
@@ -160,6 +162,43 @@
     <div class="ch-row-head"><h3>Recent chords</h3><button class="btn" id="chClear">Clear</button></div>
     <div class="hist-strip" id="chHistory"></div>
     <div class="field ch-window"><div class="lbl">Broken-chord window <output id="chWindowOut"></output></div><input type="range" id="chWindow" min="0" max="3" step="0.25"><p class="hint">Notes played one after another within this time count as one chord. Set to Off to count only notes held down.</p></div>
+  </div>
+</section>
+
+<!-- ============ VOICES ============ -->
+<section class="view" id="view-voices" hidden>
+  <h1>Voices</h1>
+  <p class="lede">Choose what your keyboard sounds like. Pick a single voice, layer two voices on every key, or split the keyboard into zones with different voices. The sound comes from your keyboard's own speakers.</p>
+
+  <div class="sheet v-top">
+    <p class="v-status" id="vStatus"></p>
+    <div class="v-dev">
+      <label class="field"><span class="lbl">Voice set</span>
+        <select id="vProfile"><option value="auto" id="vProfileAuto">Auto</option><option value="p105">Yamaha P-105</option><option value="gm">General MIDI</option></select></label>
+      <button class="btn" id="vReset" title="Stops all notes and returns the keyboard to normal Grand Piano">Reset keyboard</button>
+    </div>
+  </div>
+
+  <div class="sheet v-section">
+    <h3>Presets</h3>
+    <div class="presets" id="vPresets"></div>
+  </div>
+
+  <div class="sheet v-section">
+    <div class="ch-row-head"><h3>Keyboard</h3><div class="seg" id="vMode"><button data-v="single">Single</button><button data-v="layer">Layer</button><button data-v="split">Split</button><button data-v="three">3 zones</button></div></div>
+    <div class="v-strip" id="vStrip"></div>
+    <p class="hint">Keys light up as you play. To move a split, click <b>Set start</b> on a zone, then press the key where it should begin.</p>
+    <div class="v-routed" id="vRouted" hidden><b>Layers and splits play through Sightline.</b> Keep this tab open while you play. Closing it returns your keyboard to normal. If keys ever go silent, use <b>Reset keyboard</b>, or turn the keyboard off and on.</div>
+    <div class="zones" id="vZones"></div>
+  </div>
+
+  <div class="sheet v-section">
+    <h3>Effects</h3>
+    <div class="v-fx">
+      <div class="field"><div class="lbl">Reverb <output id="vRdepthOut"></output></div><div class="seg" id="vReverb"></div><input type="range" id="vRdepth" min="0" max="100" step="5" aria-label="Reverb amount"></div>
+      <div class="field"><div class="lbl">Effect <output id="vEdepthOut"></output></div><div class="seg" id="vEffect"></div><input type="range" id="vEdepth" min="0" max="100" step="5" aria-label="Effect amount"></div>
+    </div>
+    <p class="hint" id="vEffNote"></p>
   </div>
 </section>
 

@@ -12,6 +12,7 @@ It also includes timed note flashcards, music theory lessons, and progress track
 - **Learn**: 16 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
 - **Progress**: accuracy trend, per-note accuracy, session history, and backup export/import.
 - **Sound**: click any chord or example to hear it, through your keyboard's speakers or a sampled piano in the browser. Progressions play back with smooth voice leading.
+- **Voices**: switch your keyboard's built-in voices, layer two voices, or split the keyboard into up to three zones, with presets, reverb and effects. Built-in voice list for the Yamaha P-105, General MIDI for other keyboards.
 - **Adaptive**: notes you miss come up more often in both exercises and flashcards.
 
 ## Requirements
@@ -53,6 +54,7 @@ npm test        # generator, music-model and harmony tests (Node 20+)
 | `src/learn.js`, `content/lessons/` | Lesson loader and lesson content |
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
 | `src/input.js` | MIDI and computer-key input, MIDI output |
+| `src/voices.js`, `src/voicesui.js` | Keyboard voices: program changes, layer/split routing, effects, Voices tab |
 | `src/sound.js`, `src/audio.js`, `audio/piano/` | Playback to keyboard or browser piano, metronome, piano samples |
 | `docs/` | Roadmap, changelog and testing checklist |
 

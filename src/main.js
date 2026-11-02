@@ -11,8 +11,9 @@ import { renderStats, initProgress } from "./progress.js";
 import * as sound from "./sound.js";
 import { onOutputsChange } from "./input.js";
 import { audio } from "./audio.js";
+import { initVoicesUI, renderVoices, noteOn as vNoteOn, noteOff as vNoteOff } from "./voicesui.js";
 
-const TABS = ["read", "flash", "chords", "learn", "stats"];
+const TABS = ["read", "flash", "chords", "voices", "learn", "stats"];
 
 // ---- settings controls ----
 function bindSegments(attr, prefix) {
@@ -61,6 +62,7 @@ function route() {
   if (app.tab !== "read" && read.isRunning()) read.stop(true);
   if (app.tab !== "flash" && flash.isRunning()) flash.end();
   if (app.tab === "stats") renderStats();
+  if (app.tab === "voices") renderVoices();
   if (app.tab === "chords") chords.activate(); else chords.deactivate();
 }
 addEventListener("hashchange", route);
@@ -72,7 +74,8 @@ onNote((m, ts) => {
   else if (app.tab === "flash") flash.handleNote(m, ts);
   else if (app.tab === "chords") chords.handleNote(m, ts);
 });
-onNoteOff((m) => chords.handleNoteOff(m));
+onNote((m) => vNoteOn(m));
+onNoteOff((m) => { chords.handleNoteOff(m); vNoteOff(m); });
 onPedal((down) => chords.handlePedal(down));
 document.addEventListener("keyup", handleComputerKeyUp);
 addEventListener("blur", releaseAllComputerKeys);
@@ -81,7 +84,7 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target;
   if (t.tagName === "INPUT" && t.type !== "range" && t.type !== "checkbox") return;
-  const playing = app.tab === "read" || app.tab === "flash" || app.tab === "chords";
+  const playing = ["read", "flash", "chords", "voices"].includes(app.tab);
   if (e.code === "Space" && (app.tab === "read" || app.tab === "flash")) {
     e.preventDefault();
     if (!e.repeat) app.tab === "read" ? read.toggle() : flash.toggle();
@@ -113,6 +116,8 @@ $("#soundTest").onclick = () => sound.playNotes([48, 60, 64, 67], { gap: 120, du
 $("#soundBox").addEventListener("toggle", syncSound);
 document.addEventListener("click", (e) => { const box = $("#soundBox"); if (box.open && !box.contains(e.target)) box.open = false; });
 onOutputsChange(syncSound);
+const voicesConnected = initVoicesUI();
+onOutputsChange(voicesConnected);
 // Start loading the browser piano at the first interaction so the first click plays promptly.
 addEventListener("pointerdown", () => { audio(); if (sound.route() === "browser") sound.preload(); }, { once: true });
 

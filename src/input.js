@@ -14,11 +14,27 @@ export const midiOutputs = () => outputs;
 const outputListeners = [];
 export const onOutputsChange = (fn) => outputListeners.push(fn);
 
-// Some keyboards echo notes they receive back to the computer. Ignore an incoming
-// note that matches one we sent within the last moment, so playback isn't graded.
-const sentAt = new Map();
-export const markSent = (m, t) => sentAt.set(m, t);
-const isEcho = (m, ts) => sentAt.has(m) && Math.abs(ts - sentAt.get(m)) < 80;
+// Sightline sends its own notes on channels 2–7 (voice layers/splits) and 16 (playback).
+// Some keyboards echo what they receive back to the computer, so notes arriving on those
+// channels are never treated as your playing.
+const APP_CHANNELS = new Set([1, 2, 3, 4, 5, 6, 15]);
+
+// Every raw message from the keyboard, for the voice router (see voices.js).
+const rawListeners = [];
+export const onRaw = (fn) => rawListeners.push(fn);
+
+// System-exclusive access (needed only to change reverb/effect types) asks for an extra
+// browser permission, so it's requested only when the user changes those settings.
+let sysexOut = null;
+export const sysexOutput = () => sysexOut;
+export async function requestSysex() {
+  if (sysexOut) return true;
+  try {
+    const acc = await navigator.requestMIDIAccess({ sysex: true });
+    sysexOut = [...acc.outputs.values()][0] || null;
+    return !!sysexOut;
+  } catch (e) { return false; }
+}
 
 export async function initMIDI(setStatus) {
   if (!navigator.requestMIDIAccess) {
@@ -32,7 +48,8 @@ export async function initMIDI(setStatus) {
       access.inputs.forEach((inp) => {
         inp.onmidimessage = (e) => {
           const [status, note, vel] = e.data, type = status & 0xf0, ts = e.timeStamp || performance.now();
-          if ((type === 0x90 || type === 0x80) && isEcho(note, ts)) return;
+          if ((type === 0x90 || type === 0x80) && APP_CHANNELS.has(status & 0x0f)) return;
+          rawListeners.forEach((fn) => fn(e.data, ts));
           if (type === 0x90 && vel > 0) emit(note, ts);
           else if (type === 0x80 || (type === 0x90 && vel === 0)) emitOff(note, ts);
           else if (type === 0xb0 && note === 64) emitPedal(vel >= 64, ts); // sustain pedal

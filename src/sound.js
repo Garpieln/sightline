@@ -3,7 +3,8 @@
 // CC BY 3.0, Alexander Holm), with a simple synth if the samples can't load.
 import { audio, masterOut, setVolume } from "./audio.js";
 import { CFG, saveCfg } from "./state.js";
-import { midiOutputs, markSent } from "./input.js";
+import { midiOutputs } from "./input.js";
+import { PLAYBACK_CH } from "./voices.js";
 
 // ---------- settings ----------
 export function applyVolume() { setVolume(CFG.muted ? 0 : CFG.vol); }
@@ -87,10 +88,8 @@ const sounding = new Set(); // notes we turned on at the keyboard, for stopAll
 function midiVoice(m, atPerf, durMs, vel) {
   const out = midiOutputs()[0];
   const v = Math.max(20, Math.min(127, Math.round((0.3 + 0.7 * vel) * CFG.vol * 127)));
-  markSent(m, atPerf);
-  out.send([0x90, m, v], atPerf);
-  out.send([0x80, m, 0], atPerf + durMs);
-  markSent(m, atPerf + durMs);
+  out.send([0x90 | PLAYBACK_CH, m, v], atPerf);
+  out.send([0x80 | PLAYBACK_CH, m, 0], atPerf + durMs);
   sounding.add(m);
   setTimeout(() => sounding.delete(m), atPerf + durMs - performance.now() + 50);
 }
@@ -148,6 +147,6 @@ export function stopAll() {
     try { v.g.gain.cancelScheduledValues(ac.currentTime); v.g.gain.setTargetAtTime(0, ac.currentTime, 0.03); } catch (e) { /* already stopped */ }
   }
   const out = midiOutputs()[0];
-  if (out) for (const m of sounding) { markSent(m, performance.now()); out.send([0x80, m, 0]); }
+  if (out) for (const m of sounding) out.send([0x80 | PLAYBACK_CH, m, 0]);
   sounding.clear();
 }

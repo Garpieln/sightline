@@ -8,6 +8,7 @@ const DEFAULTS = {
   fkey: "C", frange: "oct", fsec: 4, fcount: "20", fsound: true, fanyoct: false, fname: true,
   ckey: "0M", cauto: true, cnotes: false, cwindow: 1.5, csev: false,
   sound: "auto", vol: 0.8, muted: false, broken: false, pbpm: 80, fhear: true,
+  kv: { profile: "auto", preset: "concert", touched: false, zones: [{ lo: 21, hi: 108, layers: [{ v: "grand", oct: 0, vol: 100 }] }], reverb: "hall2", rdepth: 50, effect: "off", edepth: 0, custom: [] },
 };
 
 export const CFG = Object.assign({}, DEFAULTS, load("cfg", {}));

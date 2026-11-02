@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0 — 2026-11-01
+
+New **Voices** tab: control your keyboard's own sounds.
+
+- Choose any of the keyboard's voices. The Yamaha P-105's 14 voices are built in, and a General MIDI set covers other keyboards. Auto-detected, with a manual override.
+- Layers: two voices on the same keys, each with its own volume and octave.
+- Splits: two or three zones with different voices. Set a split point by clicking Set start and pressing a key.
+- 8 presets (Concert Grand, Pop Grand, Ballad Layer, Jazz Trio, '70s Rhodes, Church Organ, Rock Split, Three Zones), plus your own saved presets.
+- 88-key strip showing zones and voices, with keys lighting up as you play.
+- Reverb (Off, Room, Hall 1, Hall 2, Stage) and effect (Chorus, Phaser, Tremolo, Rotary speaker) with amounts. Changing the type asks for Chrome's MIDI device permission once.
+- Pressing a voice button on the keyboard's panel updates the app.
+- Layers and splits turn off the keyboard's Local Control and route keys through Sightline on channels 2–7. The keyboard returns to normal when the tab closes, and Reset keyboard recovers stuck or silent keys.
+- App playback (clicked chords, Hear it) now uses channel 16 with the main voice. Echoed notes are filtered by channel instead of timing, so fast repeated notes are never dropped.
+- Training tabs still read the keys you physically press, not routed or octave-shifted notes.
+
 ## 0.4.0 — 2026-11-01
 
 Sound. Click any chord, note or example to hear it.
