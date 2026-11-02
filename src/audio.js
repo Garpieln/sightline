@@ -1,11 +1,24 @@
-let ctx = null;
+// Shared Web Audio context and master volume. Everything the app plays in the
+// browser (metronome, piano samples, fallback tones) goes through `master`.
+let ctx = null, master = null;
 
 export function audio() {
   if (!ctx) {
-    try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { /* no audio */ }
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      master = ctx.createGain();
+      master.connect(ctx.destination);
+    } catch (e) { /* no audio */ }
   }
   if (ctx && ctx.state === "suspended") ctx.resume();
   return ctx;
+}
+
+export function masterOut() { audio(); return master; }
+
+export function setVolume(v) {
+  audio();
+  if (master) master.gain.setTargetAtTime(v, ctx.currentTime, 0.02);
 }
 
 // Schedule a short tone at a performance.now() timestamp.
@@ -18,7 +31,7 @@ function tone(atPerf, freq, dur, type, gain) {
   g.gain.setValueAtTime(0, t);
   g.gain.linearRampToValueAtTime(gain, t + 0.004);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g).connect(ac.destination);
+  o.connect(g).connect(master);
   o.start(t); o.stop(t + dur + 0.02);
 }
 

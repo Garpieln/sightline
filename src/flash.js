@@ -5,6 +5,7 @@ import { midiOf, midiName, rangeFor } from "./music.js";
 import { VH, staffLines, clefAndKey, noteHead } from "./staff.js";
 import { pickWeighted } from "./generator.js";
 import { audio, buzz } from "./audio.js";
+import { playNotes } from "./sound.js";
 
 const F = { running: false, card: null, phase: "idle", n: 0, ok: 0, streak: 0, best: 0, rts: [], res: [], raf: 0, deadline: 0, shown: 0, prevD: null };
 export const isRunning = () => F.running;
@@ -83,6 +84,7 @@ function resolve(hit, played, rt) {
     const sh = $("#flashSheet");
     sh.classList.remove("shake"); void sh.offsetWidth; sh.classList.add("shake", "redwash");
     if (CFG.fsound) buzz();
+    if (CFG.fhear) playNotes([c.midi], { delay: CFG.fsound ? 280 : 0, dur: 0.9 });
     v.className = "verdict bad";
     v.textContent = played == null ? `Time's up. It was ${name}.` : `You played ${midiName(played, CFG.fkey)}. It was ${name}.`;
     F.res.push({ name, ok: false });

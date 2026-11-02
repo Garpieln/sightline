@@ -8,6 +8,18 @@ const emit = (m, ts) => listeners.forEach((fn) => fn(m, ts));
 const emitOff = (m, ts) => offListeners.forEach((fn) => fn(m, ts));
 const emitPedal = (down, ts) => pedalListeners.forEach((fn) => fn(down, ts));
 
+// Outputs: the app can play notes on the keyboard itself (see sound.js).
+let outputs = [];
+export const midiOutputs = () => outputs;
+const outputListeners = [];
+export const onOutputsChange = (fn) => outputListeners.push(fn);
+
+// Some keyboards echo notes they receive back to the computer. Ignore an incoming
+// note that matches one we sent within the last moment, so playback isn't graded.
+const sentAt = new Map();
+export const markSent = (m, t) => sentAt.set(m, t);
+const isEcho = (m, ts) => sentAt.has(m) && Math.abs(ts - sentAt.get(m)) < 80;
+
 export async function initMIDI(setStatus) {
   if (!navigator.requestMIDIAccess) {
     setStatus("off", "This browser has no MIDI support. Use Chrome, Edge or Firefox. Computer keys still work.");
@@ -20,12 +32,15 @@ export async function initMIDI(setStatus) {
       access.inputs.forEach((inp) => {
         inp.onmidimessage = (e) => {
           const [status, note, vel] = e.data, type = status & 0xf0, ts = e.timeStamp || performance.now();
+          if ((type === 0x90 || type === 0x80) && isEcho(note, ts)) return;
           if (type === 0x90 && vel > 0) emit(note, ts);
           else if (type === 0x80 || (type === 0x90 && vel === 0)) emitOff(note, ts);
           else if (type === 0xb0 && note === 64) emitPedal(vel >= 64, ts); // sustain pedal
         };
         names.push(inp.name);
       });
+      outputs = [...access.outputs.values()];
+      outputListeners.forEach((fn) => fn(outputs));
       setStatus(names.length ? "on" : "off",
         names.length ? names.join(", ") : "No keyboard found. Check the USB cable. Computer keys work meanwhile.");
     };

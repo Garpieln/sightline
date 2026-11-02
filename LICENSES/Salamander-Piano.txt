@@ -1,0 +1,11 @@
+Piano samples in audio/piano/
+
+Source: Salamander Grand Piano V3
+Author: Alexander Holm
+License: Creative Commons Attribution 3.0 (CC BY 3.0)
+https://creativecommons.org/licenses/by/3.0/
+Original: https://archive.org/details/SalamanderGrandPianoV3
+
+Obtained via the npm package @audio-samples/piano-mp3-velocity8 (Jan Forst, MIT).
+Changes for Sightline: velocity layer 8 only, trimmed to 4.5 seconds with a fade-out,
+converted to mono 64 kbps MP3, and renamed (D# -> Ds, F# -> Fs).

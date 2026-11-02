@@ -254,3 +254,34 @@ td code,p code,li code{font-family:var(--f-mono);font-size:13px}
 .arrow{color:var(--ink-2);font-size:12px}
 .ch-hist{margin-top:20px}
 .ch-window{margin-top:16px;max-width:420px}
+
+/* sound */
+.sound{position:relative}
+.sound summary{list-style:none;cursor:pointer;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;border:1px solid var(--rule);color:var(--ink-2)}
+.sound summary::-webkit-details-marker{display:none}
+.sound summary:hover,.sound[open] summary{color:var(--ink);border-color:var(--ink-2)}
+.sound svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sound .spk{fill:currentColor}
+.sound .slash{display:none}
+.sound.muted .waves{display:none}.sound.muted .slash{display:inline}
+.sound-pop{position:absolute;right:0;top:42px;z-index:20;width:min(300px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 12px 32px rgba(0,0,0,.18)}
+@media (max-width:700px){.midi{margin-left:0}.sound{margin-left:auto}.sound-pop{right:auto;left:auto;right:0}}
+.playable{cursor:pointer}
+button.dchip,button.pchip,button.hchip,button.sym,button.ch-sym{font:inherit;color:inherit;background:none;text-align:left}
+button.sym,button.ch-sym{border:0;padding:0;border-bottom:1.5px dotted color-mix(in srgb,var(--ink-2) 60%,transparent)}
+button.sym:hover,button.ch-sym:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.ch-sym{align-self:flex-start}
+button.sym{font-family:var(--f-display);font-size:22px;font-weight:700}
+button.ch-sym{font-family:var(--f-display);font-size:64px;font-weight:700;line-height:1.05}
+button.dchip:hover,button.pchip:hover,button.hchip:hover{border-color:var(--accent)}
+button.dchip.here:hover{border-color:var(--ink)}
+.pchip.playing{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.pchip.playing small{color:var(--surface)}
+.playbtn{padding:3px 10px;font-size:12px}
+.cell.selected path{stroke:var(--ink);stroke-width:2.5}
+.ch-sel{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.note.hear{color:var(--accent)}
+.play{border:1px solid var(--rule);background:var(--surface);color:var(--accent);border-radius:999px;width:24px;height:24px;font-size:10px;cursor:pointer;vertical-align:middle;margin-right:6px;padding:0;line-height:1}
+.play:hover{border-color:var(--accent);background:var(--accent-soft)}
+.play.wide{width:auto;padding:0 10px;height:26px;font-size:12px}
+.plays{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}

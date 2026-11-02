@@ -13,6 +13,7 @@ Guiding constraints, from the project's goals:
 - **v0.1**: single-file prototype with Read & play, Flashcards, Learn, Progress.
 - **v0.2**: modular project, lessons as content files, progress export/import, tests, docs.
 - **v0.3**: Chords tab: chord recognition, circle of fifths, key detection, next-chord, color and progression suggestions.
+- **v0.4**: Sound: keyboard output or sampled piano, clickable chords and examples everywhere, progression playback.
 
 ## Next
 

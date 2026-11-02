@@ -8,6 +8,9 @@ import * as flash from "./flash.js";
 import * as chords from "./chords.js";
 import { initLearn } from "./learn.js";
 import { renderStats, initProgress } from "./progress.js";
+import * as sound from "./sound.js";
+import { onOutputsChange } from "./input.js";
+import { audio } from "./audio.js";
 
 const TABS = ["read", "flash", "chords", "learn", "stats"];
 
@@ -43,11 +46,11 @@ function syncInputs() {
   $("#offset").value = CFG.offset; $("#offOut").textContent = (CFG.offset > 0 ? "+" : "") + CFG.offset + " ms";
   $("#metro").checked = CFG.metro; $("#countin").checked = CFG.countin;
   $("#fsec").value = CFG.fsec; $("#fsecOut").textContent = CFG.fsec + " s";
-  $("#fsound").checked = CFG.fsound; $("#fanyoct").checked = CFG.fanyoct; $("#fname").checked = CFG.fname;
+  $("#fsound").checked = CFG.fsound; $("#fanyoct").checked = CFG.fanyoct; $("#fname").checked = CFG.fname; $("#fhear").checked = CFG.fhear;
 }
 
 for (const id of ["bpm", "offset", "fsec"]) $("#" + id).addEventListener("input", (e) => { CFG[id] = +e.target.value; saveCfg(); syncInputs(); });
-for (const id of ["metro", "countin", "fsound", "fanyoct", "fname"]) $("#" + id).addEventListener("change", (e) => { CFG[id] = e.target.checked; saveCfg(); });
+for (const id of ["metro", "countin", "fsound", "fanyoct", "fname", "fhear"]) $("#" + id).addEventListener("change", (e) => { CFG[id] = e.target.checked; saveCfg(); });
 
 // ---- tabs ----
 function route() {
@@ -92,6 +95,41 @@ document.addEventListener("keydown", (e) => {
   if (playing) handleComputerKey(e);
 });
 
+// ---- sound ----
+function syncSound() {
+  $("#vol").value = CFG.vol; $("#volOut").textContent = Math.round(CFG.vol * 100) + "%";
+  $("#muted").checked = CFG.muted; $("#broken").checked = CFG.broken;
+  $("#pbpm").value = CFG.pbpm; $("#pbpmOut").textContent = CFG.pbpm + " bpm";
+  $$("#soundSrc button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === CFG.sound)));
+  $("#soundStatus").textContent = sound.outputLabel();
+  $("#soundBox").classList.toggle("muted", CFG.muted || CFG.vol === 0);
+}
+$("#vol").addEventListener("input", (e) => { sound.setSound({ vol: +e.target.value }); syncSound(); });
+$("#muted").addEventListener("change", (e) => { sound.setSound({ muted: e.target.checked }); syncSound(); });
+$("#broken").addEventListener("change", (e) => { sound.setSound({ broken: e.target.checked }); });
+$("#pbpm").addEventListener("input", (e) => { sound.setSound({ pbpm: +e.target.value }); syncSound(); });
+$("#soundSrc").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) { sound.setSound({ sound: b.dataset.v }); syncSound(); } });
+$("#soundTest").onclick = () => sound.playNotes([48, 60, 64, 67], { gap: 120, dur: 1.6 });
+$("#soundBox").addEventListener("toggle", syncSound);
+document.addEventListener("click", (e) => { const box = $("#soundBox"); if (box.open && !box.contains(e.target)) box.open = false; });
+onOutputsChange(syncSound);
+// Start loading the browser piano at the first interaction so the first click plays promptly.
+addEventListener("pointerdown", () => { audio(); if (sound.route() === "browser") sound.preload(); }, { once: true });
+
+// Anything with data-play is clickable sound. data-mode: chord (default), melodic,
+// interval (melodic then together), scale, or seq (chords separated by "|").
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-play]");
+  if (!el) return;
+  const mode = el.dataset.mode || "chord";
+  const groups = el.dataset.play.split("|").map((g) => g.trim().split(/\s+/).map(Number));
+  if (mode === "seq") sound.playSequence(groups.map((midis) => ({ midis, beats: 2 })));
+  else if (mode === "melodic") sound.playMelodic(groups[0]);
+  else if (mode === "scale") sound.playNotes(groups[0], { gap: 260, dur: 0.45 });
+  else if (mode === "interval") { sound.playMelodic(groups[0]); sound.playNotes(groups[0], { delay: 1100, dur: 1.4 }); }
+  else sound.playChord(groups[0], e);
+});
+
 // ---- boot ----
 bindSegments("data-set", "");
 bindSegments("data-fset", "f");
@@ -103,5 +141,7 @@ flash.initFlash();
 initProgress();
 chords.initChords();
 initLearn();
+syncSound();
+sound.applyVolume();
 route();
 initMIDI((state, text) => { $("#midi").dataset.state = state; $("#midiText").textContent = text; });

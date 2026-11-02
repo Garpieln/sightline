@@ -74,7 +74,7 @@ export function grandStaff(notes, sig, sigAcc, width = 360) {
     const d = type === "s" ? SHARP_POS[letter] : FLAT_POS[letter];
     const [g, c] = type === "s" ? ["sharp", 131] : ["flat", 100];
     s += glyph(GLYPH[g], x, tY(d) + c * GS) + glyph(GLYPH[g], x, bY(d - 14) + c * GS);
-    x += 11;
+    x += 13;
   }
   const nx = Math.max(x + 60, width / 2 + 10);
   for (const staff of ["t", "b"]) {

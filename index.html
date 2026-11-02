@@ -22,6 +22,20 @@
       <a href="#learn" data-tab="learn">Learn</a>
       <a href="#stats" data-tab="stats">Progress</a>
     </nav>
+    <details class="sound" id="soundBox">
+      <summary aria-label="Sound settings" title="Sound settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/><path class="slash" d="M16 9l6 6M22 9l-6 6"/></svg>
+      </summary>
+      <div class="sound-pop">
+        <div class="field"><div class="lbl">Volume <output id="volOut"></output></div><input type="range" id="vol" min="0" max="1" step="0.05"></div>
+        <label class="check"><input type="checkbox" id="muted"> Mute app sounds</label>
+        <div class="field"><div class="lbl">Play through</div><div class="seg" id="soundSrc"><button data-v="auto">Auto</button><button data-v="keyboard">Keyboard</button><button data-v="browser">Browser</button></div><p class="hint" id="soundStatus"></p></div>
+        <label class="check"><input type="checkbox" id="broken"> Clicks play chords broken</label>
+        <p class="hint">Hold Shift while clicking for the other style.</p>
+        <div class="field"><div class="lbl">Progression tempo <output id="pbpmOut"></output></div><input type="range" id="pbpm" min="40" max="160" step="5"></div>
+        <button class="btn" id="soundTest">Play a test chord</button>
+      </div>
+    </details>
     <div class="midi" id="midi" data-state="idle">
       <span class="dot"></span><span id="midiText">Connecting to MIDI…</span>
       <span class="heard" id="heard" title="Last note received">—</span>
@@ -87,6 +101,7 @@
       <label class="check"><input type="checkbox" id="fsound"> Sound on mistakes</label>
       <label class="check"><input type="checkbox" id="fanyoct"> Accept any octave</label>
       <label class="check"><input type="checkbox" id="fname"> Show note name after each card</label>
+      <label class="check"><input type="checkbox" id="fhear"> Hear the correct note after a miss</label>
       <div class="btns"><button class="btn primary" id="flashStart">Start <kbd>Space</kbd></button></div>
     </div>
     <div class="sheet" id="flashSheet">
@@ -117,8 +132,10 @@
         <div class="seg" id="chMode"><button data-v="auto">Auto</button><button data-v="lock">Locked</button></div>
       </div>
       <div class="ch-circle" id="chCircle"></div>
+      <div class="ch-sel" id="chSel" hidden><span id="chSelText"></span><button class="btn primary" id="chLockSel">Lock key</button></div>
       <p class="hint" id="chKeyAlt"></p>
       <div class="legend"><span style="--c:var(--accent-soft-strong)">Chords in the key</span><span style="--c:var(--accent)">You're playing</span><span style="--c:var(--ink)">Numbered: suggested next</span></div>
+      <p class="hint">Click any chord on this page to hear it. Shift+click plays it broken.</p>
     </div>
   </div>
 

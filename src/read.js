@@ -5,6 +5,7 @@ import { KEYS, midiName, stepOfMidi } from "./music.js";
 import { VW, VH, BOT, yOf, staffLines, clefAndKey, noteHead } from "./staff.js";
 import { genExercise } from "./generator.js";
 import { audio, click } from "./audio.js";
+import { playSequence, stopAll } from "./sound.js";
 
 const BARS_PER_SYSTEM = 4;
 let EX = null, LAY = null;
@@ -82,6 +83,8 @@ export function retry() {
 export function toggle() {
   if (R.running) { stop(true); return; }
   audio();
+  stopAll();
+  hearing = false;
   renderScore();
   R.mode = CFG.mode;
   R.beatMs = 60000 / CFG.bpm;
@@ -230,8 +233,22 @@ function finish() {
   </div>
   <div class="advice">${advice}</div>
   ${Object.keys(trouble).length ? `<p class="hint" style="margin-bottom:6px">Notes to review (they'll appear more often):</p><div class="chips">${Object.entries(trouble).map(([k, v]) => `<span class="chip badc">${k} ×${v}</span>`).join("")}</div>` : ""}
-  <div class="btns" style="margin-top:14px"><button class="btn primary" data-act="retry">Retry same <kbd>R</kbd></button><button class="btn" data-act="new">New exercise <kbd>N</kbd></button>${sugg ? `<button class="btn" data-act="tempo" data-v="${sugg}">Set tempo to ${sugg}</button>` : ""}</div>`;
+  <div class="btns" style="margin-top:14px"><button class="btn primary" data-act="retry">Retry same <kbd>R</kbd></button><button class="btn" data-act="new">New exercise <kbd>N</kbd></button><button class="btn" data-act="hear">Hear it</button>${sugg ? `<button class="btn" data-act="tempo" data-v="${sugg}">Set tempo to ${sugg}</button>` : ""}</div>`;
   setStatus("done", Math.round(acc * 100) + "%", tempo ? Math.round(ot * 100) + "%" : "–");
+}
+
+// Play the exercise back at the current tempo, after a run, highlighting each note.
+let hearing = false;
+function hear(btn) {
+  const unmark = () => document.querySelectorAll("#score .note.hear").forEach((g) => g.classList.remove("hear"));
+  const done = () => { hearing = false; unmark(); btn.textContent = "Hear it"; };
+  if (hearing) { stopAll(); done(); return; }
+  hearing = true;
+  btn.textContent = "Stop";
+  playSequence(EX.notes.map((n, i) => ({
+    midis: [n.midi], beats: n.dur,
+    onStart: () => { unmark(); const g = document.getElementById("n" + i); if (g) g.classList.add("hear"); },
+  })), { bpm: CFG.bpm, legato: 0.9, onEnd: done });
 }
 
 export function initRead(syncInputs) {
@@ -244,6 +261,7 @@ export function initRead(syncInputs) {
     const a = b.dataset.act;
     if (a === "retry") retry();
     if (a === "new") newExercise();
+    if (a === "hear") hear(b);
     if (a === "tempo") { CFG.bpm = +b.dataset.v; saveCfg(); syncInputs(); b.textContent = "Tempo set"; }
   });
   newExercise();

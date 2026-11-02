@@ -11,6 +11,7 @@ It also includes timed note flashcards, music theory lessons, and progress track
 - **Chords**: names any chord you play, shows it on the grand staff and an interactive circle of fifths, detects the key, and suggests next chords, richer voicings and progressions with the reason for each.
 - **Learn**: 16 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
 - **Progress**: accuracy trend, per-note accuracy, session history, and backup export/import.
+- **Sound**: click any chord or example to hear it, through your keyboard's speakers or a sampled piano in the browser. Progressions play back with smooth voice leading.
 - **Adaptive**: notes you miss come up more often in both exercises and flashcards.
 
 ## Requirements
@@ -51,7 +52,8 @@ npm test        # generator, music-model and harmony tests (Node 20+)
 | `src/chords.js`, `src/circle.js` | Chords tab and circle of fifths |
 | `src/learn.js`, `content/lessons/` | Lesson loader and lesson content |
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
-| `src/input.js`, `src/audio.js` | MIDI and computer-key input, metronome sounds |
+| `src/input.js` | MIDI and computer-key input, MIDI output |
+| `src/sound.js`, `src/audio.js`, `audio/piano/` | Playback to keyboard or browser piano, metronome, piano samples |
 | `docs/` | Roadmap and changelog |
 
 To add a lesson, add an HTML fragment to `content/lessons/` and an entry in `content/lessons/index.json`.
@@ -64,4 +66,5 @@ Progress is stored only in your browser. Nothing is sent anywhere. Use **Progres
 
 - Code and lesson text: MIT (see `LICENSE`).
 - Music symbols are outlines from the Noto Music font, under the SIL Open Font License 1.1 (see `LICENSES/NotoMusic-OFL.txt`).
+- Piano sound: Salamander Grand Piano V3 by Alexander Holm, CC BY 3.0 (see `LICENSES/Salamander-Piano.txt`). Samples were trimmed and converted to mono MP3.
 - Built-in music will be public domain only. Copyrighted songs are only ever loaded from files users import themselves.

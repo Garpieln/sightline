@@ -24,7 +24,7 @@ export function cellOf(chord) {
   return null;
 }
 
-export function circleSVG({ key, current, suggestions = [], auto }) {
+export function circleSVG({ key, current, suggestions = [], auto, selected = null }) {
   // A minor key sits at the same position as its relative major, so the wedge is the same.
   const inKey = new Set([-1, 0, 1].map((d) => (key.ci + d + 12) % 12));
   const cur = cellOf(current);
@@ -37,7 +37,7 @@ export function circleSVG({ key, current, suggestions = [], auto }) {
       const k = makeKey(i, ring === "M" ? "major" : "minor");
       const isTonic = key.ci === i && (ring === "M") === (key.mode === "major");
       const isCur = cur && cur.ring === ring && cur.i === i;
-      const cls = ["cell", ring === "M" ? "maj" : "min", inKey.has(i) ? "in-key" : "", isTonic ? "tonic" : "", isCur ? "current" : ""].join(" ");
+      const cls = ["cell", ring === "M" ? "maj" : "min", inKey.has(i) ? "in-key" : "", isTonic ? "tonic" : "", isCur ? "current" : "", selected === k.id ? "selected" : ""].join(" ");
       const [r1, r2] = ring === "M" ? [R.mid, R.out] : [R.inn, R.mid];
       const label = ring === "M" ? MAJ_LABEL[i] || spName(k.tonic) : MIN_LABEL[i] || spName(k.tonic) + "m";
       const numeral = inKey.has(i) ? numeralFor(k.tonic, ring === "M" ? "maj" : "min", key) : "";

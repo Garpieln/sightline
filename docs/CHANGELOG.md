@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 — 2026-11-01
+
+Sound. Click any chord, note or example to hear it.
+
+- Plays through your MIDI keyboard's own speakers when one is connected, otherwise a sampled grand piano in the browser (Salamander Grand Piano, CC BY 3.0, about 1 MB, loaded on first use). Falls back to a simple synth if the samples can't load.
+- Sound settings in the top bar: volume, mute, play through Auto / Keyboard / Browser, broken-chord clicks, progression tempo, and a test chord.
+- Chords tab: every chord is clickable (your chord, the diatonic row, suggestions, color chords, progression chips, recent chords). Click plays the chord together; Shift+click plays it broken.
+- Suggested chords play in the inversion closest to the chord you just played, so you hear smooth voice leading.
+- Progressions have a Play button that plays them one bar per chord and highlights the chord that's sounding.
+- Circle of fifths: clicking a key now plays its chord and selects it. A Lock key button makes it the key.
+- Learn: play buttons for intervals, scales and modes, chord qualities and inversions, cadences, progressions, and the voice leading, circle and emotion examples.
+- Flashcards: hear the correct note after a miss (on by default).
+- Read & play: Hear it button after a run plays the exercise at your tempo and highlights each note.
+- Keyboards that echo received notes back are filtered so playback is never graded as your playing.
+- Wider key-signature spacing on the grand staff.
+
 ## 0.3.0 — 2026-11-01
 
 New **Chords** tab for building chord and key-signature knowledge around the circle of fifths.

@@ -101,3 +101,17 @@ test("a dominant outside the key resolves to a major chord unless only minor fit
   const g7 = identify([67, 71, 74, 77], D);
   assert.equal(suggestNext(g7, analyze(g7, D), D)[0].chord.sym, "C");
 });
+
+test("playback voicing moves smoothly from the previous chord", async () => {
+  const { voice, makeChord, spellLetter } = await import("../src/theory.js");
+  const C = makeChord(spellLetter(0, 0), "maj"), F = makeChord(spellLetter(3, 5), "maj"), G = makeChord(spellLetter(4, 7), "maj");
+  const vc = voice(C);
+  assert.equal(vc[0] % 12, 0);                       // C in the bass
+  assert.deepEqual(vc.slice(1), [60, 64, 67]);       // root position around middle C
+  assert.deepEqual(vc.slice(1).map((m) => m % 12).sort(), [0, 4, 7].sort());
+  const vf = voice(F, vc);
+  assert.deepEqual(vf.slice(1), [60, 65, 69]);       // C–F–A: keeps the common C
+  const vg = voice(G, vc);
+  assert.deepEqual(vg.slice(1), [59, 62, 67]);       // B–D–G: nearest to C–E–G
+  assert.ok(vf[0] < 55 && vf[0] % 12 === 5);
+});

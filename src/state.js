@@ -7,6 +7,7 @@ const DEFAULTS = {
   metro: true, countin: true, offset: 0,
   fkey: "C", frange: "oct", fsec: 4, fcount: "20", fsound: true, fanyoct: false, fname: true,
   ckey: "0M", cauto: true, cnotes: false, cwindow: 1.5, csev: false,
+  sound: "auto", vol: 0.8, muted: false, broken: false, pbpm: 80, fhear: true,
 };
 
 export const CFG = Object.assign({}, DEFAULTS, load("cfg", {}));

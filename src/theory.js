@@ -485,3 +485,29 @@ export function suggestProgressions(an, key) {
     chords: p.r.map((r) => ({ role: r, chord: realize(r, key, !!p.sev), here: r === role })),
   }));
 }
+
+// ---------- voicing for playback ----------
+// Right hand: close-position chord in the inversion nearest the previous chord
+// (smooth voice leading). Left hand: the bass note (root, or slash bass) below it.
+export function voice(chord, prev = null) {
+  const pcs = chord.tones.map(pcOf), n = pcs.length;
+  const cands = [];
+  for (let inv = 0; inv < n; inv++) {
+    const order = [...pcs.slice(inv), ...pcs.slice(0, inv)];
+    for (let base = 55; base <= 67; base++) {
+      if (mod(base, 12) !== order[0]) continue;
+      const notes = [base];
+      for (let i = 1; i < n; i++) { let m = notes[i - 1] + 1; while (mod(m, 12) !== order[i]) m++; notes.push(m); }
+      cands.push(notes);
+    }
+  }
+  const prevRH = prev ? prev.filter((m) => m >= 55) : [];
+  const dist = (a, b) => a.reduce((s, x) => s + Math.min(...b.map((y) => Math.abs(x - y))), 0) + b.reduce((s, y) => s + Math.min(...a.map((x) => Math.abs(x - y))), 0);
+  const cost = (c) => (prevRH.length ? dist(c, prevRH) : Math.abs((c[0] + c[c.length - 1]) / 2 - 64) * 2) + (c[c.length - 1] > 79 ? 6 : 0);
+  const rh = cands.sort((a, b) => cost(a) - cost(b))[0];
+  const bassPc = pcOf(chord.bass || chord.root);
+  const prevBass = prev && prev.length && Math.min(...prev) < 55 ? Math.min(...prev) : 45;
+  let bass = 36;
+  for (let m = 36; m <= 54; m++) if (mod(m, 12) === bassPc && Math.abs(m - prevBass) < Math.abs(bass - prevBass)) bass = m;
+  return [bass, ...rh];
+}
