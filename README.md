@@ -54,7 +54,7 @@ npm test        # generator, music-model and harmony tests (Node 20+)
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
 | `src/input.js` | MIDI and computer-key input, MIDI output |
 | `src/sound.js`, `src/audio.js`, `audio/piano/` | Playback to keyboard or browser piano, metronome, piano samples |
-| `docs/` | Roadmap and changelog |
+| `docs/` | Roadmap, changelog and testing checklist |
 
 To add a lesson, add an HTML fragment to `content/lessons/` and an entry in `content/lessons/index.json`.
 
