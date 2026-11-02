@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sightline Piano</title>
+<meta name="description" content="Sight-reading and note-recognition trainer for MIDI keyboards, with music theory lessons.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+<script type="module" src="src/main.js"></script>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand">Sight<i>line</i></div>
+    <nav id="tabs">
+      <a href="#read" data-tab="read">Read &amp; play</a>
+      <a href="#flash" data-tab="flash">Flashcards</a>
+      <a href="#learn" data-tab="learn">Learn</a>
+      <a href="#stats" data-tab="stats">Progress</a>
+    </nav>
+    <div class="midi" id="midi" data-state="idle">
+      <span class="dot"></span><span id="midiText">Connecting to MIDI…</span>
+      <span class="heard" id="heard" title="Last note received">—</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ READ ============ -->
+<section class="view" id="view-read">
+  <h1>Read &amp; play</h1>
+  <p class="lede">The page stays still. The shaded band moves at your tempo. Read ahead of it and play each note as the band reaches it. Notes are graded on pitch and timing after you play them.</p>
+  <div class="tool">
+    <div class="panel" id="readPanel">
+      <div class="field"><div class="lbl">Key</div><div class="seg" data-set="key"><button data-v="C">C</button><button data-v="G">G</button><button data-v="D">D</button><button data-v="F">F</button><button data-v="Bb">B♭</button></div></div>
+      <div class="field"><div class="lbl">Range</div><div class="seg" data-set="range"><button data-v="five">5-finger</button><button data-v="oct">Octave</button><button data-v="staff">Staff</button><button data-v="wide">+Ledger</button></div><p class="hint" id="rangeHint"></p></div>
+      <div class="field"><div class="lbl">Rhythm</div><div class="seg" data-set="rhythm"><button data-v="q">Quarters</button><button data-v="mix">Mixed</button></div></div>
+      <div class="field"><div class="lbl">Length</div><div class="seg" data-set="bars"><button data-v="4">4 bars</button><button data-v="8">8</button><button data-v="12">12</button><button data-v="16">16</button></div></div>
+      <div class="field"><div class="lbl">Mode</div><div class="seg" data-set="mode"><button data-v="tempo">Tempo</button><button data-v="wait">Wait</button></div><p class="hint" id="modeHint"></p></div>
+      <div class="field" id="bpmField"><div class="lbl">Tempo <output id="bpmOut"></output></div><input type="range" id="bpm" min="30" max="160" step="2"></div>
+      <div class="field"><div class="lbl">Feedback</div><div class="seg" data-set="feedback"><button data-v="live">Live colors</button><button data-v="summary">Summary only</button></div></div>
+      <label class="check"><input type="checkbox" id="metro"> Metronome click</label>
+      <label class="check"><input type="checkbox" id="countin"> 1-bar count-in</label>
+      <details>
+        <summary>Advanced</summary>
+        <div class="field"><div class="lbl">Input offset <output id="offOut"></output></div><input type="range" id="offset" min="-150" max="150" step="5"><p class="hint">If you consistently grade as late while feeling on the beat, move this positive by your average lateness.</p></div>
+      </details>
+      <div class="btns">
+        <button class="btn primary" id="readStart">Start <kbd>Space</kbd></button>
+        <button class="btn" id="readNew">New <kbd>N</kbd></button>
+        <button class="btn" id="readRetry">Retry <kbd>R</kbd></button>
+      </div>
+    </div>
+
+    <div class="sheet" id="readSheet">
+      <div class="sheet-head">
+        <h2 id="exTitle">Exercise</h2><span class="meta" id="exMeta"></span>
+        <div class="status"><span>Beat <b id="stBeat">–</b></span><span>Pitch <b id="stAcc">–</b></span><span>On time <b id="stTime">–</b></span></div>
+      </div>
+      <div class="score" id="score"></div>
+      <div class="legend">
+        <span style="--c:var(--ok)">Right note, on time</span>
+        <span style="--c:var(--warn)">Right note, early or late</span>
+        <span style="--c:var(--bad)">Wrong note or missed</span>
+        <span style="--c:var(--ink-2)">Marks under the staff show timing: left of the line is early, right is late</span>
+      </div>
+      <div class="summary" id="readSummary" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLASH ============ -->
+<section class="view" id="view-flash" hidden>
+  <h1>Flashcards</h1>
+  <p class="lede">One note appears. Play it as fast as you can before the timer runs out. Notes you miss come back more often.</p>
+  <div class="tool">
+    <div class="panel">
+      <div class="field"><div class="lbl">Key</div><div class="seg" data-fset="key"><button data-v="C">C</button><button data-v="G">G</button><button data-v="D">D</button><button data-v="F">F</button><button data-v="Bb">B♭</button></div></div>
+      <div class="field"><div class="lbl">Range</div><div class="seg" data-fset="range"><button data-v="five">5-finger</button><button data-v="oct">Octave</button><button data-v="staff">Staff</button><button data-v="wide">+Ledger</button></div></div>
+      <div class="field"><div class="lbl">Time per card <output id="fsecOut"></output></div><input type="range" id="fsec" min="1" max="10" step="0.5"></div>
+      <div class="field"><div class="lbl">Cards</div><div class="seg" data-fset="count"><button data-v="20">20</button><button data-v="40">40</button><button data-v="0">Endless</button></div></div>
+      <label class="check"><input type="checkbox" id="fsound"> Sound on mistakes</label>
+      <label class="check"><input type="checkbox" id="fanyoct"> Accept any octave</label>
+      <label class="check"><input type="checkbox" id="fname"> Show note name after each card</label>
+      <div class="btns"><button class="btn primary" id="flashStart">Start <kbd>Space</kbd></button></div>
+    </div>
+    <div class="sheet" id="flashSheet">
+      <div class="flash-stage">
+        <div class="fstats"><div><span>Card</span> <b id="fCard">0</b></div><div><span>Correct</span> <b id="fOk">0</b></div><div><span>Streak</span> <b id="fStreak">0</b></div><div><span>Avg time</span> <b id="fRt">–</b></div></div>
+        <div id="flashStaff"></div>
+        <div class="timer" id="fTimer"><i id="fBar"></i></div>
+        <div class="verdict" id="fVerdict">Press Start, then play the note you see.</div>
+      </div>
+      <div class="summary" id="flashSummary" hidden></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEARN ============ -->
+<section class="view" id="view-learn" hidden>
+  <h1>Learn</h1>
+  <p class="lede">Short lessons with something to try at the keyboard after each one. Tags mark how solid a claim is: <span class="tag ev">Evidence</span> research-backed, <span class="tag cv">Convention</span> how musicians commonly do it, <span class="tag op">Opinion</span> a judgment call.</p>
+  <div class="learn">
+    <div class="toc" id="toc"></div>
+    <article id="lesson"></article>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="view" id="view-stats" hidden>
+  <h1>Progress</h1>
+  <p class="lede">Saved in this browser on this device. Every reading run and flashcard session adds to it, and the exercise generator uses it to serve your weak notes more often.</p>
+  <div class="section" id="dataBox"><h3>Your data</h3><p class="hint">Progress lives only in this browser. Export a backup file to move it to another browser or device, or to keep it safe.</p><div class="btns" style="margin-top:10px"><button class="btn" id="exportBtn">Export progress</button><label class="btn" for="importFile">Import progress</label><input type="file" id="importFile" accept="application/json,.json" hidden></div><p class="hint" id="dataMsg" role="status"></p></div>
+  <div id="statsBody"></div>
+</section>
+</main>
+
+</body>
+</html>

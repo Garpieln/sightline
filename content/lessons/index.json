@@ -1,0 +1,92 @@
+[
+  {
+    "id": "practice",
+    "title": "How to practice",
+    "group": "Practice",
+    "file": "practice.html"
+  },
+  {
+    "id": "technique",
+    "title": "Posture and technique",
+    "group": "Practice",
+    "file": "technique.html"
+  },
+  {
+    "id": "staff",
+    "title": "Reading the staff",
+    "group": "Reading",
+    "file": "staff.html"
+  },
+  {
+    "id": "rhythm",
+    "title": "Rhythm and counting",
+    "group": "Reading",
+    "file": "rhythm.html"
+  },
+  {
+    "id": "intervals",
+    "title": "Intervals",
+    "group": "Theory",
+    "file": "intervals.html"
+  },
+  {
+    "id": "scales",
+    "title": "Scales and keys",
+    "group": "Theory",
+    "file": "scales.html"
+  },
+  {
+    "id": "chords",
+    "title": "Chords and inversions",
+    "group": "Theory",
+    "file": "chords.html"
+  },
+  {
+    "id": "function",
+    "title": "Roman numerals and function",
+    "group": "Harmony",
+    "file": "function.html"
+  },
+  {
+    "id": "progressions",
+    "title": "Building chord progressions",
+    "group": "Harmony",
+    "file": "progressions.html"
+  },
+  {
+    "id": "voiceleading",
+    "title": "Voice leading",
+    "group": "Harmony",
+    "file": "voiceleading.html"
+  },
+  {
+    "id": "ear",
+    "title": "Playing by ear",
+    "group": "Creating",
+    "file": "ear.html"
+  },
+  {
+    "id": "improv",
+    "title": "Improvisation",
+    "group": "Creating",
+    "file": "improv.html"
+  },
+  {
+    "id": "compose",
+    "title": "Composing a piece",
+    "group": "Creating",
+    "file": "compose.html"
+  },
+  {
+    "id": "genres",
+    "title": "Genre recipes",
+    "group": "Creating",
+    "file": "genres.html"
+  },
+  {
+    "id": "emotion",
+    "title": "Emotion, harmony and key",
+    "group": "Creating",
+    "file": "emotion.html"
+  }
+]
