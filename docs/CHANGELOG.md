@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.6.0 — 2026-11-09
+
+New **Progressions** tab: a chord progression library you can practice from.
+
+- Library in three parts: your own (saved in the browser), From videos (`content/progressions/library.json`, maintained by Claude from videos you share), and 15 starter progressions (pop axis, ii–V–I, neo-soul ii–V, gospel walk-down, Andalusian, 12-bar blues and more). Search by name, tag or creator.
+- Any progression can be viewed and played in any key, with chord names and Roman numerals. Click a chord to hear it.
+- Create progressions four ways:
+  - Type chord symbols or Roman numerals (`Cmaj7 Am7 | Dm7 G7`, `ii7 V7 Imaj7`, `V7/vi`, `♭VII`). Bar lines split a bar between chords; `Am7:2` sets beats. The key can be detected from the chords.
+  - Click chords from the key's palette, including borrowed chords and secondary dominants.
+  - Record from the keyboard: each chord you hold is added with your exact voicing, which moves with the key.
+  - Generate: pick key, style (pop, jazz, neo-soul/gospel, classical, cinematic, rock), mood and length to get three ideas built from the suggestion rules. Save any of them.
+  - Plus **Save as progression** in the Chords tab turns your recent chords into a progression.
+- Practice mode:
+  - Play-along with a moving cursor, count-in and metronome; each chord is graded on time, late or missed.
+  - Wait mode waits for each chord and times your changes.
+  - All 12 keys moves around the circle of fifths after each pass (down a fifth by default).
+  - Roman numerals only hides chord names.
+  - Any inversion counts, 5ths are optional, and an added 9th is fine. Wrong chords are named as you hold them.
+  - Results show per-key scores, chords to review and advice, and are saved to Progress.
+- Chord engine: new m11, 13, 7♭9, 7♯9, 6/9, maj7♯11 and 9sus4 chords, recognized when played and analyzed as secondary dominants where they apply. Inversions are named by interval, so an extension in the bass is labeled correctly.
+- Fixed: chords built inside the app weren't analyzed in their key, which made some suggestions fall back to "outside the key" ideas.
+- Progress backups now include your saved progressions.
+- Video pipeline: `tools/video/frames.sh` (frames, contact sheets, audio), `tools/video/audio_chords.py` (chord timeline from audio), `tools/library.mjs` (add, list and remove library entries). See `docs/VIDEO-PIPELINE.md`.
+- Added `CLAUDE.md` with project conventions for future sessions.
+
 ## 0.5.0 — 2026-11-01
 
 New **Voices** tab: control your keyboard's own sounds.

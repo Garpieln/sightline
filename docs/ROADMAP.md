@@ -15,6 +15,7 @@ Guiding constraints, from the project's goals:
 - **v0.3**: Chords tab: chord recognition, circle of fifths, key detection, next-chord, color and progression suggestions.
 - **v0.4**: Sound: keyboard output or sampled piano, clickable chords and examples everywhere, progression playback.
 - **v0.5**: Voices: keyboard voice picker, layers, splits, presets and effects over MIDI.
+- **v0.6**: Progressions: library, typing/palette/recording/generator, practice (play-along, wait, 12 keys), video pipeline.
 
 ## Next
 
@@ -30,6 +31,9 @@ Guiding constraints, from the project's goals:
 - Intervals and chords in exercises (two or more notes at once).
 - Fading feedback mode that gradually reduces live colors as accuracy rises.
 - Style picker for chord suggestions (pop, classical, jazz, blues).
+- Progression practice backing: bass line or drum groove under your chords.
+- Odd meters (6/8, 5/4) and repeat signs in progressions.
+- Watched folder on the Mac for videos, so sharing doesn't need a chat.
 - Minor keys and more keys in Read & play.
 - Ear training: intervals, chord qualities, and melodic dictation played back by the app.
 - Improvisation and composition tools: backing progressions, record and loop, export MIDI.

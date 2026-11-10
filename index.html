@@ -19,6 +19,7 @@
       <a href="#read" data-tab="read">Read &amp; play</a>
       <a href="#flash" data-tab="flash">Flashcards</a>
       <a href="#chords" data-tab="chords">Chords</a>
+      <a href="#progs" data-tab="progs">Progressions</a>
       <a href="#voices" data-tab="voices">Voices</a>
       <a href="#learn" data-tab="learn">Learn</a>
       <a href="#stats" data-tab="stats">Progress</a>
@@ -159,9 +160,25 @@
   </div>
 
   <div class="sheet ch-hist">
-    <div class="ch-row-head"><h3>Recent chords</h3><button class="btn" id="chClear">Clear</button></div>
+    <div class="ch-row-head"><h3>Recent chords</h3><div class="btns"><button class="btn" id="chSaveProg">Save as progression</button><button class="btn" id="chClear">Clear</button></div></div>
     <div class="hist-strip" id="chHistory"></div>
     <div class="field ch-window"><div class="lbl">Broken-chord window <output id="chWindowOut"></output></div><input type="range" id="chWindow" min="0" max="3" step="0.25"><p class="hint">Notes played one after another within this time count as one chord. Set to Off to count only notes held down.</p></div>
+  </div>
+</section>
+
+<!-- ============ PROGRESSIONS ============ -->
+<section class="view" id="view-progs" hidden>
+  <h1>Progressions</h1>
+  <p class="lede">Your chord progression library. Save progressions from videos, type or play your own, or generate ideas, then practice them in any key.</p>
+  <div class="pg-layout">
+    <aside class="sheet pg-list">
+      <div class="btns"><button class="btn primary" id="pgNew">New</button><button class="btn" id="pgGenOpen">Generate</button></div>
+      <label class="sr" for="pgSearch">Search progressions</label>
+      <input id="pgSearch" class="pg-search" type="search" placeholder="Search names, tags, creators">
+      <div class="pg-tagrow" id="pgTags"></div>
+      <div id="pgItems"></div>
+    </aside>
+    <div class="pg-main" id="pgMain"></div>
   </div>
 </section>
 

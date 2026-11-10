@@ -219,6 +219,10 @@ export function initChords() {
     if (b.dataset.v === "auto") { S.auto = true; CFG.cauto = true; saveCfg(); detect(); } else { setKey(S.key, false); }
     render();
   });
+  $("#chSaveProg").onclick = () => {
+    if (!S.history.length) return;
+    document.dispatchEvent(new CustomEvent("sl:saveprog", { detail: { midis: S.history.map((h) => h.midis) } }));
+  };
   $("#chClear").onclick = () => { S.history = []; S.ranked = null; S.last = null; render(); };
   const chk = (id, k) => { const el = $("#" + id); el.checked = CFG[k]; el.onchange = () => { CFG[k] = el.checked; saveCfg(); render(); }; };
   chk("chShowNotes", "cnotes");

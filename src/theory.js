@@ -94,11 +94,22 @@ export const TYPES = [
   { id: "maj9", sym: "maj9", name: "major ninth", iv: [0, 2, 4, 7, 11], deg: [0, 1, 2, 4, 6], pr: 2.4, opt5: true },
   { id: "9", sym: "9", name: "dominant ninth", iv: [0, 2, 4, 7, 10], deg: [0, 1, 2, 4, 6], pr: 2.3, opt5: true },
   { id: "m9", sym: "m9", name: "minor ninth", iv: [0, 2, 3, 7, 10], deg: [0, 1, 2, 4, 6], pr: 2.4, opt5: true },
+  // Extended and altered chords (common in jazz, gospel and neo-soul). `opt` lists
+  // intervals players often leave out of the voicing.
+  { id: "m11", sym: "m11", name: "minor eleventh", iv: [0, 3, 7, 10, 14, 17], deg: [0, 2, 4, 6, 1, 3], pr: 2.8, opt: [7, 14] },
+  { id: "13", sym: "13", name: "dominant thirteenth", iv: [0, 4, 7, 10, 14, 21], deg: [0, 2, 4, 6, 1, 5], pr: 2.8, opt: [7, 14] },
+  { id: "7b9", sym: "7♭9", name: "dominant seventh flat nine", iv: [0, 4, 7, 10, 13], deg: [0, 2, 4, 6, 1], pr: 3, opt: [7] },
+  { id: "7#9", sym: "7♯9", name: "dominant seventh sharp nine", iv: [0, 4, 7, 10, 15], deg: [0, 2, 4, 6, 1], pr: 3, opt: [7] },
+  { id: "69", sym: "6/9", name: "six-nine", iv: [0, 4, 7, 9, 14], deg: [0, 2, 4, 5, 1], pr: 2.7, opt: [7] },
+  { id: "maj7#11", sym: "maj7♯11", name: "major seventh sharp eleven", iv: [0, 4, 7, 11, 18], deg: [0, 2, 4, 6, 3], pr: 3, opt: [7] },
+  { id: "9sus4", sym: "9sus4", name: "ninth suspended 4th", iv: [0, 5, 7, 10, 14], deg: [0, 3, 4, 6, 1], pr: 2.7, opt: [7] },
 ];
 const TYPE = Object.fromEntries(TYPES.map((t) => [t.id, t]));
 export const typeById = (id) => TYPE[id];
-const MINORISH = new Set(["min", "dim", "m7", "m7b5", "dim7", "mmaj7", "m6", "madd9", "m9"]);
-const MAJORISH = new Set(["maj", "maj7", "6", "add9", "maj9", "7", "9", "sus2", "sus4", "5", "7sus4", "aug"]);
+const MINORISH = new Set(["min", "dim", "m7", "m7b5", "dim7", "mmaj7", "m6", "madd9", "m9", "m11"]);
+const MAJORISH = new Set(["maj", "maj7", "6", "add9", "maj9", "7", "9", "sus2", "sus4", "5", "7sus4", "aug", "13", "7b9", "7#9", "69", "maj7#11", "9sus4"]);
+export const isMinorish = (tid) => MINORISH.has(tid);
+const DOMINANTS = new Set(["maj", "7", "9", "13", "7b9", "7#9"]);
 const INTERVAL_NAMES = ["unison", "minor 2nd", "major 2nd", "minor 3rd", "major 3rd", "perfect 4th", "tritone", "perfect 5th", "minor 6th", "major 6th", "minor 7th", "major 7th"];
 
 // Build a chord from a spelled root and type id.
@@ -107,12 +118,21 @@ export function makeChord(root, tid, bassSp = null) {
   const tones = t.iv.map((s, i) => spellLetter(root.l + t.deg[i], rpc + s));
   const bass = bassSp || root;
   const sym = spName(root) + t.sym + (sameSp(bass, root) ? "" : "/" + spName(bass));
-  return { root, tid, t, tones, bass, sym, rootSym: spName(root) + t.sym, rpc, pcs: new Set(tones.map(pcOf)) };
+  return { kind: "chord", root, tid, t, tones, bass, sym, rootSym: spName(root) + t.sym, rpc, pcs: new Set(tones.map(pcOf)) };
 }
 
 // ---------- recognition ----------
 const setEq = (a, b) => a.size === b.size && [...a].every((x) => b.has(x));
 const INV_NAMES = ["root position", "1st inversion", "2nd inversion", "3rd inversion"];
+// Name the inversion from the interval between the root and the bass note.
+function inversionName(tid, iv) {
+  if (iv === 0) return INV_NAMES[0];
+  if (tid === "dim7" && iv === 9) return INV_NAMES[3];
+  if (tid === "sus2" && iv === 2) return "2nd in the bass";
+  const n = { 3: 1, 4: 1, 6: 2, 7: 2, 8: 2, 10: 3, 11: 3 }[iv];
+  if (n) return INV_NAMES[n];
+  return ({ 1: "♭9", 2: "9th", 5: "4th", 9: "6th", 13: "♭9", 14: "9th", 15: "♯9", 17: "11th", 18: "♯11", 21: "13th" }[iv] || "extension") + " in the bass";
+}
 
 export function identify(midis, key) {
   const notes = [...new Set(midis)].sort((a, b) => a - b);
@@ -129,7 +149,13 @@ export function identify(midis, key) {
     for (const t of TYPES) {
       const full = new Set(t.iv);
       const variants = [[full, false]];
-      if (t.opt5) variants.push([new Set(t.iv.filter((x) => x !== 7)), true]);
+      const opt = t.opt || (t.opt5 ? [7] : []);
+      // every subset of the optional intervals may be left out
+      for (let mask = 1; mask < 1 << opt.length; mask++) {
+        const drop = opt.filter((_, i) => mask & (1 << i)).map((x) => x % 12);
+        variants.push([new Set(t.iv.map((x) => x % 12).filter((x) => !drop.includes(x))), drop.includes(7)]);
+      }
+      variants[0][0] = new Set(t.iv.map((x) => x % 12));
       for (const [v, no5] of variants) {
         if (!setEq(v, rel)) continue;
         let score = t.pr + (no5 ? 0.6 : 0) + (root === bassPc ? 0 : 1.1);
@@ -161,8 +187,9 @@ export function identify(midis, key) {
     const spByPc = new Map(ch.tones.map((s) => [pcOf(s), s]));
     const bassSp = spByPc.get(bassPc) || spellInKey(bassPc, key);
     const chord = makeChord(rootSp, c.t.id, bassSp);
-    const bi = c.t.iv.indexOf(mod(bassPc - c.root, 12));
-    chord.inversion = bi <= 0 ? INV_NAMES[0] : c.t.iv[bi] === 2 ? "9th in the bass" : INV_NAMES[Math.min(bi, 3)];
+    const bi = c.t.iv.findIndex((x) => x % 12 === mod(bassPc - c.root, 12));
+    const biv = bi < 0 ? 0 : c.t.iv[bi];
+    chord.inversion = inversionName(c.t.id, biv);
     chord.no5 = c.no5;
     chord.notes = spelledNotes((pc) => spByPc.get(pc) || spellInKey(pc, key));
     chord.kind = "chord";
@@ -188,7 +215,7 @@ export function octaveOf(m, sp) {
 
 // ---------- analysis in a key ----------
 const NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII"];
-const NUM_SUFFIX = { maj: "", min: "", dim: "°", aug: "+", sus2: "sus2", sus4: "sus4", 5: "5", maj7: "maj7", 7: "7", m7: "7", m7b5: "ø7", dim7: "°7", mmaj7: "(maj7)", 6: "6", m6: "6", add9: "add9", madd9: "add9", "7sus4": "7sus4", maj9: "maj9", 9: "9", m9: "9" };
+const NUM_SUFFIX = { maj: "", min: "", dim: "°", aug: "+", sus2: "sus2", sus4: "sus4", 5: "5", maj7: "maj7", 7: "7", m7: "7", m7b5: "ø7", dim7: "°7", mmaj7: "(maj7)", 6: "6", m6: "6", add9: "add9", madd9: "add9", "7sus4": "7sus4", maj9: "maj9", 9: "9", m9: "9", m11: "11", 13: "13", "7b9": "7♭9", "7#9": "7♯9", 69: "6/9", "maj7#11": "maj7♯11", "9sus4": "9sus4" };
 const FUNC = {
   major: ["Tonic", "Predominant", "Tonic", "Predominant", "Dominant", "Tonic", "Dominant"],
   minor: ["Tonic", "Predominant", "Tonic", "Predominant", "Dominant", "Tonic", "Dominant"],
@@ -254,12 +281,12 @@ export function analyze(chord, key) {
     return res;
   }
   // Secondary dominant: major or dominant-7 chord a fifth above a diatonic chord (not I).
-  if (["maj", "7", "9"].includes(chord.tid)) {
+  if (DOMINANTS.has(chord.tid)) {
     const target = mod(chord.rpc - 7, 12);
     const d = diatonic(key).find((c) => c.rpc === target && c.tid !== "dim");
     if (d && d.degree !== 0) {
       res.kind = "secondary"; res.role = "sec:" + d.degree; res.target = d;
-      res.numeral = (chord.tid === "maj" ? "V" : "V7") + "/" + d.numeral;
+      res.numeral = "V" + (chord.tid === "maj" ? "" : NUM_SUFFIX[chord.tid]) + "/" + d.numeral.replace(/maj7|ø7|°7|7|9|11|13|add9|6/g, "");
       res.func = "Secondary dominant";
       res.note = `Borrowed dominant that pulls toward ${d.sym}.`;
       return res;
@@ -303,7 +330,7 @@ export function detectKeys(events) {
       const isTonic = e.chord.rpc === k.tpc && (k.mode === "major" ? MAJORISH.has(e.chord.tid) && e.chord.tid !== "7" : MINORISH.has(e.chord.tid) && e.chord.tid !== "dim");
       if (isTonic) s += 0.9 * w + (i === events.length - 1 ? 0.15 : 0) + (i === 0 ? 0.25 : 0);
       const next = events[i + 1];
-      if (next && e.chord.rpc === mod(k.tpc + 7, 12) && ["maj", "7", "9"].includes(e.chord.tid) && next.chord.rpc === k.tpc) s += 0.6 * w;
+      if (next && e.chord.rpc === mod(k.tpc + 7, 12) && DOMINANTS.has(e.chord.tid) && next.chord.rpc === k.tpc) s += 0.6 * w;
     });
     s += (k.mode === "major" ? 0.02 : 0) - 0.004 * Math.abs(k.sig);
     return { key: k, score: s };
@@ -400,7 +427,7 @@ export function suggestNext(chord, an, key) {
   } else {
     // Outside the key: resolve down a fifth if it sounds like a dominant, otherwise move to
     // the diatonic chords that share the most notes.
-    if (["maj", "7", "9"].includes(chord.tid)) {
+    if (DOMINANTS.has(chord.tid)) {
       const root = spellLetter(chord.root.l - 4, chord.rpc - 7);
       const tgt = makeChord(root, !fitsKey(makeChord(root, "maj"), key) && fitsKey(makeChord(root, "min"), key) ? "min" : "maj");
       tgt.numeral = numeralFor(tgt.root, tgt.tid, key);

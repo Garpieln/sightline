@@ -6,8 +6,8 @@ import { makeKey, spName, sigShort, numeralFor, keyName, circleIndexOfPc } from 
 const SIZE = 420, CX = 210, CY = 210;
 const R = { out: 186, mid: 132, inn: 84 };
 const MAJ_LABEL = { 6: "F♯/G♭" }, MIN_LABEL = { 6: "D♯m/E♭m" };
-const MINOR_FAMILY = new Set(["min", "m7", "m6", "madd9", "m9", "mmaj7"]);
-const MAJOR_FAMILY = new Set(["maj", "maj7", "7", "6", "add9", "maj9", "9", "sus2", "sus4", "7sus4", "5", "aug"]);
+const MINOR_FAMILY = new Set(["min", "m7", "m6", "madd9", "m9", "mmaj7", "m11"]);
+const MAJOR_FAMILY = new Set(["maj", "maj7", "7", "6", "add9", "maj9", "9", "sus2", "sus4", "7sus4", "5", "aug", "13", "7b9", "7#9", "69", "maj7#11", "9sus4"]);
 
 const pt = (r, deg) => { const a = ((deg - 90) * Math.PI) / 180; return [CX + r * Math.cos(a), CY + r * Math.sin(a)]; };
 function sector(r1, r2, i) {

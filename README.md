@@ -12,6 +12,7 @@ It also includes timed note flashcards, music theory lessons, and progress track
 - **Learn**: 16 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
 - **Progress**: accuracy trend, per-note accuracy, session history, and backup export/import.
 - **Sound**: click any chord or example to hear it, through your keyboard's speakers or a sampled piano in the browser. Progressions play back with smooth voice leading.
+- **Progressions**: a library of chord progressions (yours, ones added from videos, and starters). Type them, click them from a palette, record them from your keyboard, or generate ideas, then practice in play-along or wait mode in any or all 12 keys.
 - **Voices**: switch your keyboard's built-in voices, layer two voices, or split the keyboard into up to three zones, with presets, reverb and effects. Built-in voice list for the Yamaha P-105, General MIDI for other keyboards.
 - **Adaptive**: notes you miss come up more often in both exercises and flashcards.
 
@@ -38,7 +39,7 @@ Then open <http://localhost:5173>. Localhost counts as a secure page, so MIDI wo
 ## Development
 
 ```sh
-npm test        # generator, music-model and harmony tests (Node 20+)
+npm test        # generator, music-model, harmony and progression tests (Node 20+)
 ```
 
 | Path | What's there |
@@ -51,12 +52,16 @@ npm test        # generator, music-model and harmony tests (Node 20+)
 | `src/read.js`, `src/flash.js` | Read & play and Flashcards |
 | `src/theory.js` | Harmony engine: keys, chord recognition, analysis, key detection, suggestions |
 | `src/chords.js`, `src/circle.js` | Chords tab and circle of fifths |
+| `src/progmodel.js` | Progressions: parsing, key-relative storage, transposition, grading, generator |
+| `src/progstore.js`, `src/progsui.js`, `src/practice.js` | Progression library, Progressions tab, practice mode |
+| `content/progressions/library.json` | Progressions added from videos |
+| `tools/` | Video pipeline (`video/frames.sh`, `video/audio_chords.py`) and `library.mjs` |
 | `src/learn.js`, `content/lessons/` | Lesson loader and lesson content |
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
 | `src/input.js` | MIDI and computer-key input, MIDI output |
 | `src/voices.js`, `src/voicesui.js` | Keyboard voices: program changes, layer/split routing, effects, Voices tab |
 | `src/sound.js`, `src/audio.js`, `audio/piano/` | Playback to keyboard or browser piano, metronome, piano samples |
-| `docs/` | Roadmap, changelog and testing checklist |
+| `docs/` | Roadmap, changelog, testing checklist and video pipeline guide |
 
 To add a lesson, add an HTML fragment to `content/lessons/` and an entry in `content/lessons/index.json`.
 

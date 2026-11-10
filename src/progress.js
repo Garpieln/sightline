@@ -3,6 +3,8 @@ import { $ } from "./dom.js";
 import { ST, replaceStats } from "./state.js";
 import { KEYS, midiOf, midiName } from "./music.js";
 import { buildExport, parseExport } from "./storage.js";
+import { exportLocal, importLocal } from "./progstore.js";
+import { keyById, keyName } from "./theory.js";
 
 export function renderStats() {
   const ss = ST.sessions, reads = ss.filter((s) => s.m === "read"), flashes = ss.filter((s) => s.m === "flash");
@@ -10,7 +12,7 @@ export function renderStats() {
   const totNotes = vals.reduce((a, n) => a + n.rs + n.fs, 0), totOk = vals.reduce((a, n) => a + n.ro + n.fo, 0);
   const fr = vals.reduce((a, n) => [a[0] + n.frt, a[1] + n.fo], [0, 0]);
   let h = `<div class="tiles">
-   <div class="tile"><div class="k">Sessions</div><div class="v">${ss.length}</div><div class="s">${reads.length} tempo · ${ss.filter((s) => s.m === "wait").length} wait · ${flashes.length} flash</div></div>
+   <div class="tile"><div class="k">Sessions</div><div class="v">${ss.length}</div><div class="s">${reads.length} tempo · ${ss.filter((s) => s.m === "wait").length} wait · ${flashes.length} flash · ${ss.filter((s) => s.m === "prog").length} progression</div></div>
    <div class="tile"><div class="k">Notes played</div><div class="v">${totNotes}</div></div>
    <div class="tile"><div class="k">Overall accuracy</div><div class="v">${totNotes ? Math.round((100 * totOk) / totNotes) + "%" : "–"}</div></div>
    <div class="tile"><div class="k">Flashcard avg</div><div class="v">${fr[1] ? (fr[0] / fr[1] / 1000).toFixed(2) + " s" : "–"}</div></div></div>`;
@@ -43,8 +45,8 @@ export function renderStats() {
   h += `<div class="section"><h3>Accuracy by note</h3><p class="hint">Reading and flashcards combined. Second line is your average flashcard time.</p><div class="stat-grid">${cells}</div></div>`;
 
   const recent = ss.slice(-12).reverse();
-  const mode = { read: "Tempo", wait: "Wait", flash: "Flash" };
-  h += `<div class="section"><h3>Recent sessions</h3>${recent.length ? `<div class="tbl"><table class="hist"><thead><tr><th>Date</th><th>Mode</th><th>Key</th><th>Tempo/timer</th><th>Notes</th><th>Accuracy</th><th>On time</th></tr></thead><tbody>${recent.map((s) => `<tr><td>${new Date(s.t).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</td><td>${mode[s.m] || s.m}</td><td>${KEYS[s.key] ? KEYS[s.key].label.split(" ")[0] : s.key}</td><td>${s.bpm ? s.bpm + " bpm" : s.sec ? s.sec + " s" : "–"}</td><td>${s.n}</td><td>${Math.round(s.acc * 100)}%</td><td>${s.ot != null ? Math.round(s.ot * 100) + "%" : "–"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="hint">No sessions yet.</p>`}</div>`;
+  const mode = { read: "Tempo", wait: "Wait", flash: "Flash", prog: "Progression" };
+  h += `<div class="section"><h3>Recent sessions</h3>${recent.length ? `<div class="tbl"><table class="hist"><thead><tr><th>Date</th><th>Mode</th><th>Key</th><th>Tempo/timer</th><th>Notes</th><th>Accuracy</th><th>On time</th></tr></thead><tbody>${recent.map((s) => `<tr><td>${new Date(s.t).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}</td><td>${mode[s.m] || s.m}</td><td>${s.m === "prog" ? keyName(keyById(s.key)) : KEYS[s.key] ? KEYS[s.key].label.split(" ")[0] : s.key}</td><td>${s.bpm ? s.bpm + " bpm" : s.sec ? s.sec + " s" : "–"}</td><td>${s.n}</td><td>${Math.round(s.acc * 100)}%</td><td>${s.ot != null ? Math.round(s.ot * 100) + "%" : "–"}</td></tr>`).join("")}</tbody></table></div>` : `<p class="hint">No sessions yet.</p>`}</div>`;
   h += `<div class="section"><div class="confirm" id="resetBox"><button class="btn" id="resetBtn">Reset all progress</button></div></div>`;
 
   $("#statsBody").innerHTML = h;
@@ -58,7 +60,7 @@ export function renderStats() {
 const msg = (t) => { $("#dataMsg").textContent = t; };
 
 function exportProgress() {
-  const blob = new Blob([JSON.stringify(buildExport({ notes: ST.notes, sessions: ST.sessions }), null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(buildExport({ notes: ST.notes, sessions: ST.sessions, progressions: exportLocal() }), null, 2)], { type: "application/json" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = `sightline-progress-${new Date().toISOString().slice(0, 10)}.json`;
@@ -73,6 +75,7 @@ async function importProgress(file) {
   try {
     const data = parseExport(await file.text());
     replaceStats(data);
+    if (data.progressions) importLocal(data.progressions);
     renderStats();
     msg(`Imported ${ST.sessions.length} sessions. This replaced the progress that was here.`);
   } catch (e) {

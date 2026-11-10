@@ -12,8 +12,10 @@ import * as sound from "./sound.js";
 import { onOutputsChange } from "./input.js";
 import { audio } from "./audio.js";
 import { initVoicesUI, renderVoices, noteOn as vNoteOn, noteOff as vNoteOff } from "./voicesui.js";
+import * as progs from "./progsui.js";
+import { fromPlayed } from "./progmodel.js";
 
-const TABS = ["read", "flash", "chords", "voices", "learn", "stats"];
+const TABS = ["read", "flash", "chords", "progs", "voices", "learn", "stats"];
 
 // ---- settings controls ----
 function bindSegments(attr, prefix) {
@@ -63,6 +65,7 @@ function route() {
   if (app.tab !== "flash" && flash.isRunning()) flash.end();
   if (app.tab === "stats") renderStats();
   if (app.tab === "voices") renderVoices();
+  if (app.tab === "progs") progs.renderProgs(); else progs.leaveProgs();
   if (app.tab === "chords") chords.activate(); else chords.deactivate();
 }
 addEventListener("hashchange", route);
@@ -73,9 +76,10 @@ onNote((m, ts) => {
   if (app.tab === "read") read.handleNote(m, ts);
   else if (app.tab === "flash") flash.handleNote(m, ts);
   else if (app.tab === "chords") chords.handleNote(m, ts);
+  else if (app.tab === "progs") progs.handleNote(m, ts);
 });
 onNote((m) => vNoteOn(m));
-onNoteOff((m) => { chords.handleNoteOff(m); vNoteOff(m); });
+onNoteOff((m) => { chords.handleNoteOff(m); vNoteOff(m); progs.handleNoteOff(m); });
 onPedal((down) => chords.handlePedal(down));
 document.addEventListener("keyup", handleComputerKeyUp);
 addEventListener("blur", releaseAllComputerKeys);
@@ -84,7 +88,7 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target;
   if (t.tagName === "INPUT" && t.type !== "range" && t.type !== "checkbox") return;
-  const playing = ["read", "flash", "chords", "voices"].includes(app.tab);
+  const playing = ["read", "flash", "chords", "voices", "progs"].includes(app.tab);
   if (e.code === "Space" && (app.tab === "read" || app.tab === "flash")) {
     e.preventDefault();
     if (!e.repeat) app.tab === "read" ? read.toggle() : flash.toggle();
@@ -145,6 +149,9 @@ read.initRead(syncInputs);
 flash.initFlash();
 initProgress();
 chords.initChords();
+progs.initProgs();
+// Chords tab: turn the recent-chords history into a new progression.
+document.addEventListener("sl:saveprog", (e) => { const p = fromPlayed(e.detail.midis); if (p.chords.length) progs.openDraft(p); });
 initLearn();
 syncSound();
 sound.applyVolume();

@@ -17,4 +17,6 @@ These need a real MIDI keyboard and can't be checked in the automated browser te
 - [ ] **Effects.** Changing reverb type asks for Chrome's MIDI permission once, then Room vs Hall 2 sound different.
 - [ ] **Panel sync.** Pressing a voice button on the keyboard updates the Voices tab.
 - [ ] **Playback channel.** Clicked chords still sound through the keyboard (now on channel 16).
+- [ ] **Progression record.** In the Progressions editor, Record adds each held chord with its voicing; the sustain pedal doesn't add extra notes.
+- [ ] **Progression practice.** Play-along grades chords on time at a comfortable tempo; Wait mode advances on each correct chord.
 - [ ] **Note-off.** Releasing keys clears the Chords tab readout to "Last played". No stuck notes.
