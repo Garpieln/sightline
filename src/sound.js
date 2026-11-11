@@ -96,8 +96,9 @@ function midiVoice(m, atPerf, durMs, vel) {
 
 // ---------- public API ----------
 // Play notes now (or after `delay` ms). gap > 0 spreads them low to high (broken chord).
-export async function playNotes(midis, { delay = 0, dur = 1.4, gap = 0, vel = 0.7 } = {}) {
-  const r = route();
+// browser: true forces the browser piano, e.g. for pitches between keys (pure-ratio demos).
+export async function playNotes(midis, { delay = 0, dur = 1.4, gap = 0, vel = 0.7, browser = false } = {}) {
+  const r = browser && route() !== "off" ? "browser" : route();
   if (r === "off" || !midis.length) return;
   const notes = [...midis].sort((a, b) => a - b);
   if (r === "keyboard") {
@@ -119,11 +120,11 @@ export function playChord(midis, e) {
   return playNotes(midis, broken ? { gap: 140, dur: 1.6 } : { dur: 1.4 });
 }
 
-export const playMelodic = (midis) => playNotes(midis, { gap: 480, dur: 0.6 });
+export const playMelodic = (midis, browser = false) => playNotes(midis, { gap: 480, dur: 0.6, browser });
 
 let seqTimers = [];
 // Play a list of steps in time. Each step: { midis, beats = 1, onStart() }.
-export function playSequence(steps, { bpm = CFG.pbpm, gap = 0, legato = 0.95, onEnd } = {}) {
+export function playSequence(steps, { bpm = CFG.pbpm, gap = 0, legato = 0.95, onEnd, browser = false } = {}) {
   stopAll();
   const beatMs = 60000 / bpm;
   let t = 60;
@@ -131,7 +132,7 @@ export function playSequence(steps, { bpm = CFG.pbpm, gap = 0, legato = 0.95, on
     const len = (s.beats || 1) * beatMs;
     seqTimers.push(setTimeout(() => {
       if (s.onStart) s.onStart();
-      playNotes(s.midis, { dur: (len * legato) / 1000, gap });
+      playNotes(s.midis, { dur: (len * legato) / 1000, gap, browser });
     }, t));
     t += len;
   });

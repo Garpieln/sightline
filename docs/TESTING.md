@@ -19,4 +19,6 @@ These need a real MIDI keyboard and can't be checked in the automated browser te
 - [ ] **Playback channel.** Clicked chords still sound through the keyboard (now on channel 16).
 - [ ] **Progression record.** In the Progressions editor, Record adds each held chord with its voicing; the sustain pedal doesn't add extra notes.
 - [ ] **Progression practice.** Play-along grades chords on time at a comfortable tempo; Wait mode advances on each correct chord.
+- [ ] **Arpeggios, Tempo mode.** A clean, even arpeggio at a comfortable tempo scores near 100% with a low evenness number; if it reads consistently late, adjust Input offset in Read & play.
+- [ ] **Arpeggios, both hands.** Wait mode advances when both hands' notes are played; Tempo mode grades each hand.
 - [ ] **Note-off.** Releasing keys clears the Chords tab readout to "Last played". No stuck notes.

@@ -48,6 +48,12 @@
     "file": "chords.html"
   },
   {
+    "id": "arpeggios",
+    "title": "Arpeggios and the physics of harmony",
+    "group": "Theory",
+    "file": "arpeggios.html"
+  },
+  {
     "id": "function",
     "title": "Roman numerals and function",
     "group": "Harmony",

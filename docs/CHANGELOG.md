@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.0 — 2026-11-10
+
+New **Technique** tab for arpeggio practice, and a lesson on arpeggios and the physics of harmony.
+
+- 9 arpeggio types (major, minor, diminished, augmented, major 7th, dominant 7th, minor 7th, half-diminished, diminished 7th) on all 12 roots, spelled the usual way (C♯ minor, D♭ major).
+- Options: 1–4 octaves, up or up and down, root position or any inversion, right hand, left hand or both (two octaves apart).
+- Wait mode to learn the shape; Tempo mode with count-in and metronome, graded on correct notes and **evenness** (spread of timing in ms), with rushing/dragging advice. Notes per beat: auto (3 for triads, 4 for sevenths), 3 or 4.
+- Order: this one, all 12 keys around the circle of fifths, random, or your weakest, from the types you choose.
+- Display: name only by default, with notation (grand staff, each hand on its own staff) and suggested fingering toggles. Fingering follows standard rules: thumb on white keys, 1-2-3 or 1-2-4 groups, black-key starts like E♭ major as 2-1-2-4.
+- Hear it plays the arpeggio at your tempo with the current note highlighted.
+- Accuracy grid for every root and type; click one to practice it. Stats are included in progress backups.
+- New lesson **Arpeggios and the physics of harmony**: what arpeggios are and how they're built, frequencies and equal temperament, the harmonic series, why consonance happens (overtone alignment, beating, learned preference), stretch tuning, how the ear hears a broken chord as a chord, history and uses, technique, a fingering chart, and how to practice. 19 play buttons, including pure-ratio vs equal-tempered demos.
+- Sound: a browser-only playback option for pitches between keys, used by those demos even when a keyboard is connected.
+
 ## 0.6.0 — 2026-11-09
 
 New **Progressions** tab: a chord progression library you can practice from.

@@ -13,9 +13,10 @@ import { onOutputsChange } from "./input.js";
 import { audio } from "./audio.js";
 import { initVoicesUI, renderVoices, noteOn as vNoteOn, noteOff as vNoteOff } from "./voicesui.js";
 import * as progs from "./progsui.js";
+import * as tech from "./technique.js";
 import { fromPlayed } from "./progmodel.js";
 
-const TABS = ["read", "flash", "chords", "progs", "voices", "learn", "stats"];
+const TABS = ["read", "flash", "tech", "chords", "progs", "voices", "learn", "stats"];
 
 // ---- settings controls ----
 function bindSegments(attr, prefix) {
@@ -66,6 +67,7 @@ function route() {
   if (app.tab === "stats") renderStats();
   if (app.tab === "voices") renderVoices();
   if (app.tab === "progs") progs.renderProgs(); else progs.leaveProgs();
+  if (app.tab === "tech") tech.renderTechnique(); else tech.leaveTechnique();
   if (app.tab === "chords") chords.activate(); else chords.deactivate();
 }
 addEventListener("hashchange", route);
@@ -77,6 +79,7 @@ onNote((m, ts) => {
   else if (app.tab === "flash") flash.handleNote(m, ts);
   else if (app.tab === "chords") chords.handleNote(m, ts);
   else if (app.tab === "progs") progs.handleNote(m, ts);
+  else if (app.tab === "tech") tech.handleNote(m, ts);
 });
 onNote((m) => vNoteOn(m));
 onNoteOff((m) => { chords.handleNoteOff(m); vNoteOff(m); progs.handleNoteOff(m); });
@@ -88,10 +91,10 @@ document.addEventListener("keydown", (e) => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target;
   if (t.tagName === "INPUT" && t.type !== "range" && t.type !== "checkbox") return;
-  const playing = ["read", "flash", "chords", "voices", "progs"].includes(app.tab);
-  if (e.code === "Space" && (app.tab === "read" || app.tab === "flash")) {
+  const playing = ["read", "flash", "chords", "voices", "progs", "tech"].includes(app.tab);
+  if (e.code === "Space" && ["read", "flash", "tech"].includes(app.tab)) {
     e.preventDefault();
-    if (!e.repeat) app.tab === "read" ? read.toggle() : flash.toggle();
+    if (!e.repeat) ({ read: read.toggle, flash: flash.toggle, tech: () => document.getElementById("tqStart").click() })[app.tab]();
     return;
   }
   if (e.repeat) return;
@@ -131,11 +134,13 @@ document.addEventListener("click", (e) => {
   const el = e.target.closest("[data-play]");
   if (!el) return;
   const mode = el.dataset.mode || "chord";
+  const browser = "browser" in el.dataset; // exact pitches between keys (physics demos)
   const groups = el.dataset.play.split("|").map((g) => g.trim().split(/\s+/).map(Number));
-  if (mode === "seq") sound.playSequence(groups.map((midis) => ({ midis, beats: 2 })));
-  else if (mode === "melodic") sound.playMelodic(groups[0]);
-  else if (mode === "scale") sound.playNotes(groups[0], { gap: 260, dur: 0.45 });
-  else if (mode === "interval") { sound.playMelodic(groups[0]); sound.playNotes(groups[0], { delay: 1100, dur: 1.4 }); }
+  if (mode === "seq") sound.playSequence(groups.map((midis) => ({ midis, beats: 2 })), { browser });
+  else if (mode === "melodic") sound.playMelodic(groups[0], browser);
+  else if (mode === "scale") sound.playNotes(groups[0], { gap: +(el.dataset.gap || 260), dur: +(el.dataset.dur || 0.45), browser });
+  else if (mode === "hold") sound.playNotes(groups[0], { dur: +(el.dataset.dur || 3), browser });
+  else if (mode === "interval") { sound.playMelodic(groups[0], browser); sound.playNotes(groups[0], { delay: 1100, dur: 1.4, browser }); }
   else sound.playChord(groups[0], e);
 });
 
@@ -150,6 +155,7 @@ flash.initFlash();
 initProgress();
 chords.initChords();
 progs.initProgs();
+tech.initTechnique();
 // Chords tab: turn the recent-chords history into a new progression.
 document.addEventListener("sl:saveprog", (e) => { const p = fromPlayed(e.detail.midis); if (p.chords.length) progs.openDraft(p); });
 initLearn();

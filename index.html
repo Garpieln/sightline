@@ -18,6 +18,7 @@
     <nav id="tabs">
       <a href="#read" data-tab="read">Read &amp; play</a>
       <a href="#flash" data-tab="flash">Flashcards</a>
+      <a href="#tech" data-tab="tech">Technique</a>
       <a href="#chords" data-tab="chords">Chords</a>
       <a href="#progs" data-tab="progs">Progressions</a>
       <a href="#voices" data-tab="voices">Voices</a>
@@ -117,6 +118,25 @@
       <div class="summary" id="flashSummary" hidden></div>
     </div>
   </div>
+</section>
+
+<!-- ============ TECHNIQUE ============ -->
+<section class="view" id="view-tech" hidden>
+  <h1>Technique</h1>
+  <p class="lede">Arpeggios in every key and type. Learn the shape in Wait mode, then build speed and evenness in Tempo mode. The Learn tab has a lesson on how arpeggios work.</p>
+  <div class="tool">
+    <div class="panel" id="tqPanel"></div>
+    <div class="sheet tq-main">
+      <div class="tq-head">
+        <div><div class="eyebrow">Arpeggio</div><h2 id="tqName"></h2><p class="hint" id="tqSub"></p></div>
+        <div class="tq-right"><span class="pr-count" id="tqCount"></span><span class="hint" id="tqProg"></span>
+          <div class="btns"><button class="btn primary" id="tqStart">Start <kbd>Space</kbd></button><button class="btn" id="tqHear">Hear it</button></div></div>
+      </div>
+      <div id="tqView"></div>
+      <div id="tqSummary"></div>
+    </div>
+  </div>
+  <div class="section"><h3>Your arpeggios</h3><p class="hint">Accuracy for each root and type, roots in circle-of-fifths order. Click one to practice it.</p><div id="tqGrid"></div></div>
 </section>
 
 <!-- ============ CHORDS ============ -->

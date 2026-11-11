@@ -106,3 +106,41 @@ export function grandStaff(notes, sig, sigAcc, width = 360) {
   return s;
 }
 export const GRAND_H = 214;
+
+// ---------- note sequence on a grand staff (arpeggios) ----------
+// cols: [{ notes: [{ step, acc, hand }], fingers: { rh, lh }, state }]. No key signature:
+// every sharp or flat is written. RH fingering above the treble staff, LH below the bass.
+export function seqStaff(cols, { fingering = true, current = -1 } = {}) {
+  const X0 = 80, DX = 30, W = X0 + cols.length * DX + 16;
+  const onTreble = (n) => (n.staff ? n.staff === "t" : n.m >= 60);
+  const yOfNote = (n) => (onTreble(n) ? tY(n.step) : bY(n.step));
+  const ys = cols.flatMap((c) => c.notes.map(yOfNote));
+  const top = Math.min(G.tBot - 60, ...ys.map((y) => y - 10)) - (fingering ? 18 : 0);
+  const bottom = Math.max(G.bBot + 12, ...ys.map((y) => y + 10)) + (fingering ? 20 : 0);
+  let s = `<svg viewBox="0 ${top} ${W} ${bottom - top}" role="img" aria-label="Arpeggio notation">`;
+  for (let i = 0; i < 5; i++) {
+    s += `<line class="staffline" x1="14" x2="${W - 4}" y1="${G.tBot - i * 12}" y2="${G.tBot - i * 12}"/>`;
+    s += `<line class="staffline" x1="14" x2="${W - 4}" y1="${G.bBot - i * 12}" y2="${G.bBot - i * 12}"/>`;
+  }
+  s += `<line class="barline" x1="14" x2="14" y1="${G.tBot - 48}" y2="${G.bBot}"/><line class="barline" x1="${W - 4}" x2="${W - 4}" y1="${G.tBot - 48}" y2="${G.bBot}"/>`;
+  s += glyph(GLYPH.clef, 20, G.tBot);
+  s += `<path class="glyph" d="${GLYPH.bass}" transform="translate(22 ${G.bBot - 36 + 644 * BASS_S}) scale(${BASS_S} ${-BASS_S})"/>`;
+  cols.forEach((c, i) => {
+    const x = X0 + i * DX;
+    s += `<g class="sq${c.state ? " " + c.state : ""}${i === current ? " cur" : ""}">`;
+    if (i === current) s += `<rect class="sq-cur" x="${x - 14}" y="${top + 2}" width="28" height="${bottom - top - 4}" rx="5"/>`;
+    for (const n of c.notes) {
+      const treble = onTreble(n), Y = treble ? tY : bY, lo = treble ? 2 : -10, hi = lo + 8, y = Y(n.step);
+      for (let d = lo - 2; d >= n.step; d -= 2) s += `<line class="ledger" x1="${x - 10}" x2="${x + 10}" y1="${Y(d)}" y2="${Y(d)}"/>`;
+      for (let d = hi + 2; d <= n.step; d += 2) s += `<line class="ledger" x1="${x - 10}" x2="${x + 10}" y1="${Y(d)}" y2="${Y(d)}"/>`;
+      s += `<ellipse class="head" cx="${x}" cy="${y}" rx="6.6" ry="4.7" transform="rotate(-20 ${x} ${y})"/>`;
+      if (n.acc) { const [g, cc] = ACC_GLYPH[n.acc]; s += glyph(GLYPH[g], x - 17, y + cc * GS); }
+    }
+    if (fingering) {
+      if (c.fingers.rh) s += `<text class="fing" x="${x}" y="${top + 13}">${c.fingers.rh}</text>`;
+      if (c.fingers.lh) s += `<text class="fing" x="${x}" y="${bottom - 6}">${c.fingers.lh}</text>`;
+    }
+    s += `</g>`;
+  });
+  return s + `</svg>`;
+}

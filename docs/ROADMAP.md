@@ -16,6 +16,7 @@ Guiding constraints, from the project's goals:
 - **v0.4**: Sound: keyboard output or sampled piano, clickable chords and examples everywhere, progression playback.
 - **v0.5**: Voices: keyboard voice picker, layers, splits, presets and effects over MIDI.
 - **v0.6**: Progressions: library, typing/palette/recording/generator, practice (play-along, wait, 12 keys), video pipeline.
+- **v0.7**: Technique: arpeggio practice in all keys and types with evenness grading; arpeggio and physics lesson.
 
 ## Next
 
@@ -27,6 +28,8 @@ Guiding constraints, from the project's goals:
 
 ## Later
 
+- Scales in the Technique tab (major, minor forms, modes), with the same options and grading as arpeggios.
+- Arpeggio rhythm variations (dotted, accents) and contrary motion.
 - Rhythm expansion: eighth notes, dotted rhythms, rests, 3/4 and 6/8.
 - Intervals and chords in exercises (two or more notes at once).
 - Fading feedback mode that gradually reduces live colors as accuracy rises.

@@ -8,8 +8,9 @@ It also includes timed note flashcards, music theory lessons, and progress track
 
 - **Read & play**: generated melodies that follow musical rules, in C, G, D, F and B♭ major. Tempo mode (30–160 bpm) or Wait mode. Live color feedback or summary only. End-of-run report with tempo suggestions.
 - **Flashcards**: one note at a time with an adjustable timer, a penalty on misses, and reaction-time tracking.
+- **Technique**: arpeggios in all 12 keys and 9 types, 1–4 octaves, any inversion, either or both hands. Wait mode or Tempo mode graded on accuracy and evenness, with optional notation and suggested fingering.
 - **Chords**: names any chord you play, shows it on the grand staff and an interactive circle of fifths, detects the key, and suggests next chords, richer voicings and progressions with the reason for each.
-- **Learn**: 16 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
+- **Learn**: 17 lessons on practice science, technique, reading, theory, harmony, ear playing, improvisation and composition. Each claim is tagged Evidence, Convention or Opinion.
 - **Progress**: accuracy trend, per-note accuracy, session history, and backup export/import.
 - **Sound**: click any chord or example to hear it, through your keyboard's speakers or a sampled piano in the browser. Progressions play back with smooth voice leading.
 - **Progressions**: a library of chord progressions (yours, ones added from videos, and starters). Type them, click them from a palette, record them from your keyboard, or generate ideas, then practice in play-along or wait mode in any or all 12 keys.
@@ -39,7 +40,7 @@ Then open <http://localhost:5173>. Localhost counts as a secure page, so MIDI wo
 ## Development
 
 ```sh
-npm test        # generator, music-model, harmony and progression tests (Node 20+)
+npm test        # generator, music-model, harmony, progression and arpeggio tests (Node 20+)
 ```
 
 | Path | What's there |
@@ -56,6 +57,7 @@ npm test        # generator, music-model, harmony and progression tests (Node 20
 | `src/progstore.js`, `src/progsui.js`, `src/practice.js` | Progression library, Progressions tab, practice mode |
 | `content/progressions/library.json` | Progressions added from videos |
 | `tools/` | Video pipeline (`video/frames.sh`, `video/audio_chords.py`) and `library.mjs` |
+| `src/arpmodel.js`, `src/technique.js` | Arpeggio notes and fingering; Technique tab |
 | `src/learn.js`, `content/lessons/` | Lesson loader and lesson content |
 | `src/progress.js`, `src/state.js`, `src/storage.js` | Stats, settings, storage and backups |
 | `src/input.js` | MIDI and computer-key input, MIDI output |

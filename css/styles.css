@@ -410,3 +410,39 @@ button.dchip.here:hover{border-color:var(--ink)}
 .pr-now{font-family:var(--f-display);font-size:26px;font-weight:700}
 .pr-keys{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .chip.mid{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 50%,var(--rule))}
+
+/* technique */
+.tq-main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tq-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.tq-head h2{font-size:34px}
+.tq-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tq-right .pr-count{margin-left:0;min-width:24px}
+.tq-staff{overflow-x:auto}
+.tq-staff svg{display:block;height:auto;min-width:100%;max-height:340px;color:var(--ink)}
+.sq .head{fill:currentColor}
+.sq.ok{color:var(--ok)}.sq.bad{color:var(--warn)}.sq.miss{color:var(--bad)}
+.sq-cur{fill:var(--cursor)}
+.fing{font-family:var(--f-mono);font-size:11px;fill:var(--ink-2);text-anchor:middle}
+.sq.cur .fing{fill:var(--accent);font-weight:600}
+.sq.flash{animation:flash .35s}
+.tq-dots{display:flex;flex-wrap:wrap;gap:4px 3px;padding:6px 0}
+.tq-col{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:20px;padding:4px 2px;border-radius:6px}
+.tq-col.cur{background:var(--cursor)}
+.dot-n{width:12px;height:12px;border-radius:50%;border:2px solid var(--ink-2)}
+.tq-col.ok .dot-n{background:var(--ok);border-color:var(--ok)}
+.tq-col.bad .dot-n{background:var(--warn);border-color:var(--warn)}
+.tq-col.miss .dot-n{background:var(--bad);border-color:var(--bad)}
+.tq-col.flash{animation:shake .3s}
+.fing-t{font-family:var(--f-mono);font-size:11px;color:var(--ink-2)}
+.tq-col.cur .fing-t{color:var(--accent);font-weight:600}
+.tq-types{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px}
+.check.small{font-size:13px}
+#tqPanel .seg button{min-width:30px}
+table.heat{border-collapse:separate;border-spacing:3px;width:auto}
+table.heat th{font-size:12px;text-transform:none;letter-spacing:0;color:var(--ink-2);white-space:nowrap;text-align:right;padding-right:8px;font-weight:500}
+table.heat td{padding:0;border:0}
+.hm{width:40px;height:30px;border:1px solid var(--rule);border-radius:6px;background:var(--surface);font-family:var(--f-mono);font-size:11px;cursor:pointer;color:var(--ink-2)}
+.hm:hover{border-color:var(--accent)}
+.hm.g{background:color-mix(in srgb,var(--ok) 30%,var(--surface));color:var(--ink)}
+.hm.m{background:color-mix(in srgb,var(--warn) 30%,var(--surface));color:var(--ink)}
+.hm.l{background:color-mix(in srgb,var(--bad) 26%,var(--surface));color:var(--ink)}
